@@ -1,0 +1,2 @@
+# RNG-block-game
+WebでRNGゲームができます
