@@ -348,7 +348,7 @@
                 <p>特定のレア度のブロックを初めて見つけると、便利な機能が自動で解放されます。</p>
                 <ul>
                     <li><b>オートロール (1/100以上):</b> ボタンを自動で押し続けてくれます。</li>
-                    <li><b>複数回ロール (1/10,000以上):</b> 一度にまとめてロールできるようになります。スライダーで10倍ずつ回数を変更できます。</li>
+                    <li><b>複数回ロール (1/10,000以上):</b> 一度にまとめてロールできるようになります。スライダーで2倍ずつ回数を変更できます。</li>
                 </ul>
                 <br>
                 <h3>画面のボタン</h3>
@@ -657,7 +657,7 @@
                 dom['roll-button'].disabled = true;
 
                 const slider = dom['multi-roll-slider'];
-                const multiRollCount = slider ? Math.pow(10, parseInt(slider.value)) : 1;
+                const multiRollCount = slider ? Math.pow(2, parseInt(slider.value)) : 1;
                 let foundBlocksInRoll = [], bestBlock = null, loader, starsGained = 0;
                 
                 if (multiRollCount > 5000) {
@@ -732,7 +732,7 @@
             const updateUnlocksUI = () => {
                 dom['unlock-features-container'].innerHTML = '';
                 if (Object.values(playerData.unlocks).some(u => u) || playerData.cheats.used) {
-                    const maxPower = playerData.cheats.superMultiRoll ? 6 : 2; 
+                    const maxPower = playerData.cheats.superMultiRoll ? 20 : 7; // 2^7=128, 2^20≈1M
                     const el = document.createElement('div');
                     el.className = 'unlock-features';
                     el.innerHTML = `<div class="unlock-feature"><span>オートロール</span>${playerData.unlocks.autoRoll ? `<label class="switch"><input type="checkbox" id="auto-roll-toggle"><span class="slider"></span></label>`: '<span>ロック中</span>'}</div><div class="unlock-feature"><span>複数回ロール</span>${playerData.unlocks.multiRoll ? `<div style="display:flex; align-items:center; gap: 10px;">x<span id="multi-roll-value">1</span><input type="range" id="multi-roll-slider" min="0" max="${maxPower}" value="0" step="1"></div>`: '<span>ロック中</span>'}</div>`;
@@ -745,7 +745,7 @@
                         const slider = dom['multi-roll-slider'];
                         const valueDisplay = dom['multi-roll-value'];
                         slider.addEventListener('input', (e) => {
-                            const rollAmount = Math.pow(10, parseInt(e.target.value));
+                            const rollAmount = Math.pow(2, parseInt(e.target.value));
                             valueDisplay.textContent = rollAmount.toLocaleString('ja-JP');
                         });
                     }
@@ -816,7 +816,7 @@
                     }
                 });
                 modal.querySelector('#cheat-unlock-achievements').addEventListener('click', () => { if(confirm("本当に全ての実績をアンロックしますか？")){ activateCheat(); playerData.achievements = ACHIEVEMENTS.reduce((acc, ach) => ({...acc, [ach.id]: {timestamp:Date.now()}}), {}); alert("全ての実績をアンロックしました。"); }});
-                modal.querySelector('#cheat-super-multi-roll').addEventListener('click', () => { activateCheat(); playerData.cheats.superMultiRoll = true; if(!playerData.unlocks.multiRoll){playerData.unlocks.multiRoll = true;} updateUnlocksUI(); alert("複数回ロールの上限が100万に解放されました。"); });
+                modal.querySelector('#cheat-super-multi-roll').addEventListener('click', () => { activateCheat(); playerData.cheats.superMultiRoll = true; if(!playerData.unlocks.multiRoll){playerData.unlocks.multiRoll = true;} updateUnlocksUI(); alert("複数回ロールの上限が約100万回に解放されました。"); });
                 modal.querySelector('#cheat-set-stars').addEventListener('click', () => {
                     activateCheat();
                     const input = prompt("新しい星の値を入力してください:", playerData.stats.stars);
