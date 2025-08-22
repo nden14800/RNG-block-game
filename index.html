@@ -7,1057 +7,1055 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
-    <style>
+<style>
+    :root {
+        --bg-color: #f0f0f0; --text-color: #111; --primary-color: #007bff; --primary-hover-color: #0056b3;
+        --secondary-bg-color: #fff; --border-color: #ddd; --shadow-color: rgba(0, 0, 0, 0.1);
+        --switch-bg-color: #ccc; --switch-knob-color: white; --success-color: #28a745;
+        --warning-color: #ffc107; --danger-color: #dc3545; --star-color: #ffc107;
+        --rarity-common: #9e9e9e; --rarity-uncommon: #4caf50; --rarity-rare: #2196f3; --rarity-epic: #9c27b0;
+        --rarity-legendary: #ff9800; --rarity-mythical: #f44336; --rarity-divine: #ffeb3b; --rarity-celestial: #00bcd4;
+        --rarity-transcendent: #e91e63; --rarity-eldritch: #673ab7;
+        --rarity-cosmic: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+    }
+    @media (prefers-color-scheme: dark) {
         :root {
-            --bg-color: #f0f0f0; --text-color: #111; --primary-color: #007bff; --primary-hover-color: #0056b3;
-            --secondary-bg-color: #fff; --border-color: #ddd; --shadow-color: rgba(0, 0, 0, 0.1);
-            --switch-bg-color: #ccc; --switch-knob-color: white; --success-color: #28a745;
-            --warning-color: #ffc107; --danger-color: #dc3545; --star-color: #ffc107;
-            --rarity-common: #9e9e9e; --rarity-uncommon: #4caf50; --rarity-rare: #2196f3; --rarity-epic: #9c27b0;
-            --rarity-legendary: #ff9800; --rarity-mythical: #f44336; --rarity-divine: #ffeb3b; --rarity-celestial: #00bcd4;
-            --rarity-transcendent: #e91e63; --rarity-eldritch: #673ab7;
-            --rarity-cosmic: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+            --bg-color: #121212; --text-color: #eee; --primary-color: #4dabf7; --primary-hover-color: #1e88e5;
+            --secondary-bg-color: #1e1e1e; --border-color: #444; --shadow-color: rgba(0, 0, 0, 0.5);
+            --switch-bg-color: #555; --switch-knob-color: #ccc; --star-color: #ffd60a;
         }
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-color: #121212; --text-color: #eee; --primary-color: #4dabf7; --primary-hover-color: #1e88e5;
-                --secondary-bg-color: #1e1e1e; --border-color: #444; --shadow-color: rgba(0, 0, 0, 0.5);
-                --switch-bg-color: #555; --switch-knob-color: #ccc; --star-color: #ffd60a;
-            }
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Roboto Mono', monospace; background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; transition: background-color 0.3s, color 0.3s; overflow: hidden; }
-        main { text-align: center; width: 100%; max-width: 600px; z-index: 10; animation: fadeIn 0.5s ease-in-out; }
-        h1 { margin-bottom: 1rem; }
-        .star-display { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem; margin-bottom: 1rem; color: var(--star-color); animation: fadeIn 0.5s ease-in-out; }
-        .star-display .star-line { display: flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; }
-        .star-display .star-line svg { width: 24px; height: 24px; fill: currentColor; }
-        .star-display .star-progress { font-size: 0.8rem; opacity: 0.8; }
-        .result-container { min-height: 180px; margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; padding: 1rem; position: relative; }
-        #result-block { opacity: 0; width: 100%; }
-        #result-block.found { opacity: 1; animation: fadeIn 0.5s ease-in-out forwards; }
-        #roll-button { padding: 1rem 2rem; font-size: 1.2rem; font-family: 'Roboto Mono', monospace; cursor: pointer; border: none; background-color: var(--primary-color); color: white; border-radius: 8px; transition: background-color 0.3s, transform 0.1s, box-shadow 0.2s; }
-        #roll-button:hover:not(:disabled) { background-color: var(--primary-hover-color); transform: translateY(-2px); box-shadow: 0 4px 8px var(--shadow-color); }
-        #roll-button:active:not(:disabled) { transform: translateY(0); }
-        #roll-button:disabled { background-color: var(--switch-bg-color); cursor: not-allowed; color: var(--text-color); }
-        .top-buttons { position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; z-index: 100; animation: fadeIn 0.5s ease-in-out; }
-        .icon-button { background: var(--secondary-bg-color); border: 1px solid var(--border-color); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-color); transition: background-color 0.3s, box-shadow 0.2s, transform 0.1s; }
-        .icon-button:hover { background-color: var(--border-color); box-shadow: 0 2px 4px var(--shadow-color); transform: translateY(-1px); }
-        .icon-button:active { transform: translateY(0); }
-        .icon-button:disabled { cursor: not-allowed; opacity: 0.5; }
-        .icon-button svg { width: 20px; height: 20px; fill: currentColor; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.6); animation: fadeIn 0.3s ease; }
-        .modal-content { background-color: var(--secondary-bg-color); margin: 5% auto; padding: 20px; border: 1px solid var(--border-color); border-radius: 8px; width: 90%; max-width: 800px; position: relative; box-shadow: 0 4px 8px var(--shadow-color); max-height: 80vh; display: flex; flex-direction: column; animation: fadeIn 0.3s ease-in-out; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
-        .modal-header h2 { font-size: 1.5rem; }
-        .modal-header .progress-text { font-size: 0.9rem; opacity: 0.8; }
-        .close-button { background: none; border: none; cursor: pointer; color: var(--text-color); padding: 5px; border-radius: 50%; }
-        .close-button:hover { background-color: var(--border-color); }
-        .close-button svg { width: 24px; height: 24px; display: block; }
-        .modal-body { overflow-y: auto; flex-grow: 1; }
-        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--border-color); animation: fadeIn 0.5s ease; }
-        .setting-item span { margin-right: 1rem; }
-        .setting-item:last-child { border-bottom: none; }
-        #cheat-section, #reset-section { border: 1px solid var(--warning-color); padding: 1rem; margin-top: 1rem; border-radius: 8px; animation: fadeIn 0.5s ease; }
-        #reset-section { border-color: var(--danger-color); }
-        #cheat-warning { color: var(--warning-color); margin-bottom: 1rem; font-size: 0.9em; }
-        #cheat-content { display: none; }
-        .cheat-control { margin-top: 10px; }
-        .switch { position: relative; display: inline-block; width: 74px; height: 40px; vertical-align: middle; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--switch-bg-color);
-            transition: .4s;
-            border-radius: 40px;
-            box-shadow: inset 0 1px 3px var(--shadow-color);
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 32px;
-            width: 32px;
-            left: 4px;
-            bottom: 4px;
-            background-color: var(--switch-knob-color);
-            transition: .4s;
-            border-radius: 50%;
-            box-shadow: 0 1px 3px var(--shadow-color);
-            border: 1px solid var(--border-color);
-        }
-        input:checked + .slider { background-color: var(--primary-color); }
-        input:checked + .slider:before { transform: translateX(34px); }
-        #collection-controls { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; animation: fadeIn 0.5s ease; }
-        .filter-group { display: flex; flex-wrap: wrap; gap: 10px; }
-        .search-container { position: relative; flex-grow: 1; }
-        #search-input { width: 100%; padding: 8px 30px 8px 10px; font-family: 'Roboto Mono', monospace; background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; }
-        .search-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); opacity: 0.5; }
-        .btn, select { padding: 8px 12px; font-family: 'Roboto Mono', monospace; background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.1s; flex-grow: 1; }
-        select { cursor: pointer; }
-        .btn:hover, select:hover { border-color: var(--primary-color); box-shadow: 0 1px 2px var(--shadow-color); }
-        .btn:active { transform: translateY(1px); }
-        .btn.btn-danger { background-color: var(--danger-color); color: white; border-color: var(--danger-color); }
-        .btn.btn-danger:hover { background-color: #c82333; }
-        #collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; animation: fadeIn 0.5s ease; }
-        .pagination-controls { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 20px; padding-top: 10px; border-top: 1px solid var(--border-color); }
-        .block-card { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; }
-        .block-card.not-discovered { opacity: 0.6; cursor: default; }
-        .block-card-name { font-weight: bold; font-size: 1.1rem; word-wrap: break-word; }
-        .block-card-rarity { font-size: 0.9rem; margin: 10px 0; padding: 2px 6px; border-radius: 4px; display: inline-block; color: white; font-weight: bold; }
-        .rarity-Cosmic { background: var(--rarity-cosmic); background-size: 200% 200%; animation: cosmic-gradient 3s ease infinite; color: #111; }
-        .block-card-prob { font-size: 0.8rem; min-height: 2.5em; display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; gap: 0.5em; white-space: nowrap; }
-        #detail-modal .block-card { margin: 0 auto 1rem auto; max-width: 300px; }
-        #detail-info { text-align: left; display: flex; flex-direction: column; gap: 0.5rem; }
-        #detail-actions { text-align: center; margin-top: 1rem; }
-        .info-row { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border-color); padding: 5px 0; }
-        .info-row span:first-child { font-weight: bold; }
-        .achievement-item { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; opacity: 0.5; margin-bottom: 10px; }
-        .achievement-item.unlocked { opacity: 1; border-left: 5px solid var(--success-color); }
-        .achievement-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .achievement-name { font-weight: bold; }
-        .achievement-desc { font-size: 0.9rem; margin-bottom: 10px; }
-        .progress-bar { width: 100%; background-color: var(--border-color); border-radius: 4px; height: 10px; overflow: hidden; }
-        .progress-bar-inner { height: 100%; background-color: var(--success-color); width: 0%; transition: width 0.3s ease; }
-        .unlock-features { margin-top: 2rem; padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; display: flex; flex-direction: column; gap: 1rem; animation: fadeIn 1s ease; }
-        .unlock-feature { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
-        #multi-roll-slider { width: 150px; }
-        #loader-container { display: none; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; top: 0; left: 0; gap: 20px; background-color: rgba(0,0,0,0.7); z-index: 9999; animation: fadeIn 0.2s; }
-        .loader { width: 80px; height: 80px; animation: rotate 1s linear infinite; }
-        .loader .path { stroke: var(--primary-color); stroke-linecap: round; stroke-dasharray: 89 150; stroke-dashoffset: 0; }
-        @media (prefers-color-scheme: dark) { .loader .path { stroke: #1a73e8; } }
-        @keyframes rotate { 100% { transform: rotate(360deg); } }
-        .progress-bar-container { width: 250px; height: 8px; background-color: rgba(255,255,255,0.3); border-radius: 4px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; width: 0%; background-color: var(--primary-color); border-radius: 4px; transition: width 0.1s linear; }
-        @media (prefers-color-scheme: dark) { .progress-bar-fill { background-color: #1a73e8; } }
-        .progress-text-container { display: flex; align-items: baseline; font-size: 0.95rem; color: #fff; width: 250px; position: relative; justify-content: center; }
-        #loader-percent { }
-        #loader-time { position: absolute; right: 0; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes cosmic-gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        
-        #rarity-info-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        #rarity-info-table th, #rarity-info-table td { padding: 8px; border: 1px solid var(--border-color); text-align: left; }
-        #rarity-info-table th { background-color: var(--bg-color); }
-        .rarity-color-swatch { display: inline-block; width: 1em; height: 1em; border-radius: 50%; margin-right: 0.5em; vertical-align: middle; }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Roboto Mono', monospace; background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; transition: background-color 0.3s, color 0.3s; overflow: hidden; }
+    main { text-align: center; width: 100%; max-width: 600px; z-index: 10; animation: fadeIn 0.5s ease-in-out; }
+    h1 { margin-bottom: 1rem; }
+    .star-display { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem; margin-bottom: 1rem; color: var(--star-color); animation: fadeIn 0.5s ease-in-out; }
+    .star-display .star-line { display: flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; }
+    .star-display .star-line svg { width: 24px; height: 24px; fill: currentColor; }
+    .star-display .star-progress { font-size: 0.8rem; opacity: 0.8; }
+    .result-container { min-height: 180px; margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; padding: 1rem; position: relative; }
+    #result-block { opacity: 0; width: 100%; }
+    #result-block.found { opacity: 1; animation: fadeIn 0.5s ease-in-out forwards; }
+    #roll-button { padding: 1rem 2rem; font-size: 1.2rem; font-family: 'Roboto Mono', monospace; cursor: pointer; border: none; background-color: var(--primary-color); color: white; border-radius: 8px; transition: background-color 0.3s, transform 0.1s, box-shadow 0.2s; }
+    #roll-button:hover:not(:disabled) { background-color: var(--primary-hover-color); transform: translateY(-2px); box-shadow: 0 4px 8px var(--shadow-color); }
+    #roll-button:active:not(:disabled) { transform: translateY(0); }
+    #roll-button:disabled { background-color: var(--switch-bg-color); cursor: not-allowed; color: var(--text-color); }
+    .top-buttons { position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; z-index: 100; animation: fadeIn 0.5s ease-in-out; }
+    .icon-button { background: var(--secondary-bg-color); border: 1px solid var(--border-color); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-color); transition: background-color 0.3s, box-shadow 0.2s, transform 0.1s; }
+    .icon-button:hover { background-color: var(--border-color); box-shadow: 0 2px 4px var(--shadow-color); transform: translateY(-1px); }
+    .icon-button:active { transform: translateY(0); }
+    .icon-button:disabled { cursor: not-allowed; opacity: 0.5; }
+    .icon-button svg { width: 20px; height: 20px; fill: currentColor; }
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.6); animation: fadeIn 0.3s ease; }
+    .modal-content { background-color: var(--secondary-bg-color); margin: 5% auto; padding: 20px; border: 1px solid var(--border-color); border-radius: 8px; width: 90%; max-width: 800px; position: relative; box-shadow: 0 4px 8px var(--shadow-color); max-height: 80vh; display: flex; flex-direction: column; animation: fadeIn 0.3s ease-in-out; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
+    .modal-header h2 { font-size: 1.5rem; }
+    .modal-header .progress-text { font-size: 0.9rem; opacity: 0.8; }
+    .close-button { background: none; border: none; cursor: pointer; color: var(--text-color); padding: 5px; border-radius: 50%; }
+    .close-button:hover { background-color: var(--border-color); }
+    .close-button svg { width: 24px; height: 24px; display: block; }
+    .modal-body { overflow-y: auto; flex-grow: 1; }
+    .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--border-color); animation: fadeIn 0.5s ease; }
+    .setting-item span { margin-right: 1rem; }
+    .setting-item:last-child { border-bottom: none; }
+    #cheat-section, #reset-section { border: 1px solid var(--warning-color); padding: 1rem; margin-top: 1rem; border-radius: 8px; animation: fadeIn 0.5s ease; }
+    #reset-section { border-color: var(--danger-color); }
+    #cheat-warning { color: var(--warning-color); margin-bottom: 1rem; font-size: 0.9em; }
+    #cheat-content { display: none; }
+    .cheat-control { margin-top: 10px; }
+    .switch { position: relative; display: inline-block; width: 74px; height: 40px; vertical-align: middle; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--switch-bg-color);
+        transition: .4s;
+        border-radius: 40px;
+        box-shadow: inset 0 1px 3px var(--shadow-color);
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 32px;
+        width: 32px;
+        left: 4px;
+        bottom: 4px;
+        background-color: var(--switch-knob-color);
+        transition: .4s;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px var(--shadow-color);
+        border: 1px solid var(--border-color);
+    }
+    input:checked + .slider { background-color: var(--primary-color); }
+    input:checked + .slider:before { transform: translateX(34px); }
+    #collection-controls { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; animation: fadeIn 0.5s ease; }
+    .filter-group { display: flex; flex-wrap: wrap; gap: 10px; }
+    .search-container { position: relative; flex-grow: 1; }
+    #search-input { width: 100%; padding: 8px 30px 8px 10px; font-family: 'Roboto Mono', monospace; background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; }
+    .search-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); opacity: 0.5; }
+    .btn, select { padding: 8px 12px; font-family: 'Roboto Mono', monospace; background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.1s; flex-grow: 1; }
+    select { cursor: pointer; }
+    .btn:hover, select:hover { border-color: var(--primary-color); box-shadow: 0 1px 2px var(--shadow-color); }
+    .btn:active { transform: translateY(1px); }
+    .btn.btn-danger { background-color: var(--danger-color); color: white; border-color: var(--danger-color); }
+    .btn.btn-danger:hover { background-color: #c82333; }
+    #collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; animation: fadeIn 0.5s ease; }
+    .pagination-controls { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 20px; padding-top: 10px; border-top: 1px solid var(--border-color); }
+    .block-card { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; }
+    .block-card.not-discovered { opacity: 0.6; cursor: default; }
+    .block-card-name { font-weight: bold; font-size: 1.1rem; word-wrap: break-word; }
+    .block-card-rarity { font-size: 0.9rem; margin: 10px 0; padding: 2px 6px; border-radius: 4px; display: inline-block; color: white; font-weight: bold; }
+    .rarity-Cosmic { background: var(--rarity-cosmic); background-size: 200% 200%; animation: cosmic-gradient 3s ease infinite; color: #111; }
+    .block-card-prob { font-size: 0.8rem; min-height: 2.5em; display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; gap: 0.5em; white-space: nowrap; }
+    #detail-modal .block-card { margin: 0 auto 1rem auto; max-width: 300px; }
+    #detail-info { text-align: left; display: flex; flex-direction: column; gap: 0.5rem; }
+    #detail-actions { text-align: center; margin-top: 1rem; }
+    .info-row { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border-color); padding: 5px 0; }
+    .info-row span:first-child { font-weight: bold; }
+    .achievement-item { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; opacity: 0.5; margin-bottom: 10px; }
+    .achievement-item.unlocked { opacity: 1; border-left: 5px solid var(--success-color); }
+    .achievement-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .achievement-name { font-weight: bold; }
+    .achievement-desc { font-size: 0.9rem; margin-bottom: 10px; }
+    .progress-bar { width: 100%; background-color: var(--border-color); border-radius: 4px; height: 10px; overflow: hidden; }
+    .progress-bar-inner { height: 100%; background-color: var(--success-color); width: 0%; transition: width 0.3s ease; }
+    .unlock-features { margin-top: 2rem; padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; display: flex; flex-direction: column; gap: 1rem; animation: fadeIn 1s ease; }
+    .unlock-feature { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    #multi-roll-slider { width: 150px; }
+    #loader-container { display: none; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; position: fixed; top: 0; left: 0; gap: 20px; background-color: rgba(0,0,0,0.7); z-index: 9999; animation: fadeIn 0.2s; }
+    .loader { width: 80px; height: 80px; animation: rotate 1s linear infinite; }
+    .loader .path { stroke: var(--primary-color); stroke-linecap: round; stroke-dasharray: 89 150; stroke-dashoffset: 0; }
+    @media (prefers-color-scheme: dark) { .loader .path { stroke: #1a73e8; } }
+    @keyframes rotate { 100% { transform: rotate(360deg); } }
+    .progress-bar-container { width: 250px; height: 8px; background-color: rgba(255,255,255,0.3); border-radius: 4px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; width: 0%; background-color: var(--primary-color); border-radius: 4px; transition: width 0.1s linear; }
+    @media (prefers-color-scheme: dark) { .progress-bar-fill { background-color: #1a73e8; } }
+    .progress-text-container { display: flex; align-items: baseline; font-size: 0.95rem; color: #fff; width: 250px; position: relative; justify-content: center; }
+    #loader-percent { }
+    #loader-time { position: absolute; right: 0; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes cosmic-gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    
+    #rarity-info-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    #rarity-info-table th, #rarity-info-table td { padding: 8px; border: 1px solid var(--border-color); text-align: left; }
+    #rarity-info-table th { background-color: var(--bg-color); }
+    .rarity-color-swatch { display: inline-block; width: 1em; height: 1em; border-radius: 50%; margin-right: 0.5em; vertical-align: middle; }
 
-        /* --- 演出用CSS --- */
-        #rarity-animation-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: none; justify-content: center; align-items: center;
-            z-index: 9998; pointer-events: none; overflow: hidden;
-        }
-        .rarity-animation-content {
-            font-size: 5vw; font-weight: bold; color: white;
-            text-shadow: 0 0 10px black, 0 0 20px black, 0 0 30px black;
-            opacity: 0; animation-fill-mode: forwards;
-            padding: 2rem; border-radius: 20px;
-        }
+    /* --- 演出用CSS --- */
+    #rarity-animation-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        display: none; justify-content: center; align-items: center;
+        z-index: 9998; pointer-events: none; overflow: hidden;
+    }
+    .rarity-animation-content {
+        font-size: 5vw; font-weight: bold; color: white;
+        text-shadow: 0 0 10px black, 0 0 20px black, 0 0 30px black;
+        opacity: 0; animation-fill-mode: forwards;
+        padding: 2rem; border-radius: 20px;
+    }
 
-        #rarity-animation-overlay.show { display: flex; }
+    #rarity-animation-overlay.show { display: flex; }
 
-        /* エピック */
-        #rarity-animation-overlay.animate-epic { background: radial-gradient(circle, rgba(156, 39, 176, 0.8) 0%, rgba(156, 39, 176, 0) 70%); animation: fadeInOut 2.5s ease-in-out; }
-        .animate-epic .rarity-animation-content { animation: text-zoom 2.5s ease-in-out; color: var(--rarity-epic); text-shadow: 0 0 15px #fff; }
+    /* エピック */
+    #rarity-animation-overlay.animate-epic { background: radial-gradient(circle, rgba(156, 39, 176, 0.8) 0%, rgba(156, 39, 176, 0) 70%); animation: fadeInOut 2.5s ease-in-out; }
+    .animate-epic .rarity-animation-content { animation: text-zoom 2.5s ease-in-out; color: var(--rarity-epic); text-shadow: 0 0 15px #fff; }
 
-        /* レジェンダリー */
-        #rarity-animation-overlay.animate-legendary { animation: fadeInOut 3s; }
-        #rarity-animation-overlay.animate-legendary::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255, 152, 0, 0.7) 0%, rgba(255, 152, 0, 0) 70%); animation: rotate 20s linear infinite; }
-        #rarity-animation-overlay.animate-legendary::after { content: ''; position: absolute; top: 50%; left: 50%; width: 2px; height: 2px; background: var(--rarity-legendary); border-radius: 50%; box-shadow: 0 0 15px 5px var(--rarity-legendary), /* ... particles ... */; animation: particle-burst 3s forwards; }
-        .animate-legendary .rarity-animation-content { animation: text-float 3s forwards; color: var(--rarity-legendary); text-shadow: 0 0 20px #fff; }
+    /* レジェンダリー */
+    #rarity-animation-overlay.animate-legendary { animation: fadeInOut 3s; }
+    #rarity-animation-overlay.animate-legendary::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255, 152, 0, 0.7) 0%, rgba(255, 152, 0, 0) 70%); animation: rotate 20s linear infinite; }
+    #rarity-animation-overlay.animate-legendary::after { content: ''; position: absolute; top: 50%; left: 50%; width: 2px; height: 2px; background: var(--rarity-legendary); border-radius: 50%; box-shadow: 0 0 15px 5px var(--rarity-legendary), /* ... particles ... */; animation: particle-burst 3s forwards; }
+    .animate-legendary .rarity-animation-content { animation: text-float 3s forwards; color: var(--rarity-legendary); text-shadow: 0 0 20px #fff; }
 
-        /* ミシカル */
-        #rarity-animation-overlay.animate-mythical { background: radial-gradient(ellipse at center, rgba(244, 67, 54, 0.7) 0%, rgba(0,0,0,0) 60%); animation: fadeInOut 3.5s; }
-        .animate-mythical .rarity-animation-content { animation: text-shake 3.5s forwards; color: var(--rarity-mythical); text-shadow: 0 0 20px #fff; }
+    /* ミシカル */
+    #rarity-animation-overlay.animate-mythical { background: radial-gradient(ellipse at center, rgba(244, 67, 54, 0.7) 0%, rgba(0,0,0,0) 60%); animation: fadeInOut 3.5s; }
+    .animate-mythical .rarity-animation-content { animation: text-shake 3.5s forwards; color: var(--rarity-mythical); text-shadow: 0 0 20px #fff; }
 
-        /* ディバイン */
-        #rarity-animation-overlay.animate-divine { background: radial-gradient(circle, rgba(255, 235, 59, 0.8) 0%, rgba(255, 235, 59, 0) 75%); animation: fadeInOut 4s; }
-        #rarity-animation-overlay.animate-divine::before { content: ''; position: absolute; width: 100%; height: 100%; top: 0; left: 0; background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%,rgba(255,255,255,0) 100%); animation: light-rays 4s forwards; }
-        .animate-divine .rarity-animation-content { animation: text-glow 4s forwards; color: var(--rarity-divine); text-shadow: 0 0 25px black; }
+    /* ディバイン */
+    #rarity-animation-overlay.animate-divine { background: radial-gradient(circle, rgba(255, 235, 59, 0.8) 0%, rgba(255, 235, 59, 0) 75%); animation: fadeInOut 4s; }
+    #rarity-animation-overlay.animate-divine::before { content: ''; position: absolute; width: 100%; height: 100%; top: 0; left: 0; background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%,rgba(255,255,255,0) 100%); animation: light-rays 4s forwards; }
+    .animate-divine .rarity-animation-content { animation: text-glow 4s forwards; color: var(--rarity-divine); text-shadow: 0 0 25px black; }
 
-        /* それ以降のレア度は豪華にしていく */
-        #rarity-animation-overlay.animate-celestial { background: radial-gradient(circle, rgba(0, 188, 212, 0.8), transparent 70%), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><pattern id="star" patternUnits="userSpaceOnUse" width="50" height="50"><circle cx="10" cy="10" r="1" fill="white"/><circle cx="30" cy="40" r="0.5" fill="white"/></pattern></defs><rect width="100%" height="100%" fill="black"/><rect width="100%" height="100%" fill="url(%23star)"/></svg>'); animation: fadeInOut 4.5s; }
-        .animate-celestial .rarity-animation-content { animation: text-float 4.5s forwards; color: var(--rarity-celestial); text-shadow: 0 0 20px #fff; }
+    /* それ以降のレア度は豪華にしていく */
+    #rarity-animation-overlay.animate-celestial { background: radial-gradient(circle, rgba(0, 188, 212, 0.8), transparent 70%), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><pattern id="star" patternUnits="userSpaceOnUse" width="50" height="50"><circle cx="10" cy="10" r="1" fill="white"/><circle cx="30" cy="40" r="0.5" fill="white"/></pattern></defs><rect width="100%" height="100%" fill="black"/><rect width="100%" height="100%" fill="url(%23star)"/></svg>'); animation: fadeInOut 4.5s; }
+    .animate-celestial .rarity-animation-content { animation: text-float 4.5s forwards; color: var(--rarity-celestial); text-shadow: 0 0 20px #fff; }
 
-        #rarity-animation-overlay.animate-transcendent { background: repeating-radial-gradient(circle at center, var(--rarity-transcendent) 0, transparent 10px, var(--rarity-transcendent) 20px); background-size: 200% 200%; animation: transcendent-pulse 4.5s forwards; }
-        .animate-transcendent .rarity-animation-content { animation: text-zoom 4.5s forwards; mix-blend-mode: difference; color: white; }
-        
-        #rarity-animation-overlay.animate-eldritch { background-color: black; animation: fadeInOut 5s; }
-        #rarity-animation-overlay.animate-eldritch::before { content: ''; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: radial-gradient(circle, var(--rarity-eldritch) 10%, transparent 40%), radial-gradient(circle, #333 10%, transparent 40%); background-position: 0 0, 50px 50px; background-size: 100px 100px; animation: eldritch-swirl 10s linear infinite; }
-        .animate-eldritch .rarity-animation-content { animation: text-shake 5s forwards; color: var(--rarity-eldritch); font-family: 'Times New Roman', serif; }
-        
-        #rarity-animation-overlay.animate-cosmic { background: var(--rarity-cosmic); background-size: 400% 400%; animation: cosmic-bg 5s ease-in-out forwards, cosmic-gradient 10s ease infinite; }
-        .animate-cosmic .rarity-animation-content { animation: text-glow 5s forwards; color: white; mix-blend-mode: overlay; font-size: 8vw; }
+    #rarity-animation-overlay.animate-transcendent { background: repeating-radial-gradient(circle at center, var(--rarity-transcendent) 0, transparent 10px, var(--rarity-transcendent) 20px); background-size: 200% 200%; animation: transcendent-pulse 4.5s forwards; }
+    .animate-transcendent .rarity-animation-content { animation: text-zoom 4.5s forwards; mix-blend-mode: difference; color: white; }
+    
+    #rarity-animation-overlay.animate-eldritch { background-color: black; animation: fadeInOut 5s; }
+    #rarity-animation-overlay.animate-eldritch::before { content: ''; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: radial-gradient(circle, var(--rarity-eldritch) 10%, transparent 40%), radial-gradient(circle, #333 10%, transparent 40%); background-position: 0 0, 50px 50px; background-size: 100px 100px; animation: eldritch-swirl 10s linear infinite; }
+    .animate-eldritch .rarity-animation-content { animation: text-shake 5s forwards; color: var(--rarity-eldritch); font-family: 'Times New Roman', serif; }
+    
+    #rarity-animation-overlay.animate-cosmic { background: var(--rarity-cosmic); background-size: 400% 400%; animation: cosmic-bg 5s ease-in-out forwards, cosmic-gradient 10s ease infinite; }
+    .animate-cosmic .rarity-animation-content { animation: text-glow 5s forwards; color: white; mix-blend-mode: overlay; font-size: 8vw; }
 
-        @keyframes fadeInOut { 0%, 100% { opacity: 0; } 10%, 90% { opacity: 1; } }
-        @keyframes text-zoom { 0% { transform: scale(0.5); opacity: 0; } 20% { transform: scale(1.2); opacity: 1; } 80% { transform: scale(1); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
-        @keyframes text-float { 0% { transform: translateY(20px); opacity: 0; } 20% { transform: translateY(0); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-20px); opacity: 0; } }
-        @keyframes text-shake { 0%, 100% { opacity: 0; } 20% { opacity: 1; } 0%, 10%, 20%, 30%, 40%, 50%, 60%, 70%, 80%, 100% { transform: translateX(0); } 5% { transform: translateX(-5px); } 15% { transform: translateX(5px); } /* ... more shakes ... */ }
-        @keyframes text-glow { 0%, 100% { opacity: 0; text-shadow: 0 0 5px #fff; } 50% { opacity: 1; text-shadow: 0 0 30px #fff, 0 0 50px var(--rarity-divine); } }
-        @keyframes light-rays { 0% { transform: translateY(-100%); opacity: 0; } 20% { transform: translateY(0); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(100%); opacity: 0; } }
-        @keyframes particle-burst { from { transform: scale(0); opacity: 1; } to { transform: scale(3); opacity: 0; } }
-        @keyframes transcendent-pulse { 0% { opacity: 0; background-size: 0% 0%; } 20% { opacity: 1; background-size: 200% 200%; } 80% { opacity: 1; background-size: 200% 200%; } 100% { opacity: 0; background-size: 0% 0%; } }
-        @keyframes eldritch-swirl { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes cosmic-bg { 0%, 100% { opacity: 0; } 10%, 90% { opacity: 1; } }
-    </style>
+    @keyframes fadeInOut { 0%, 100% { opacity: 0; } 10%, 90% { opacity: 1; } }
+    @keyframes text-zoom { 0% { transform: scale(0.5); opacity: 0; } 20% { transform: scale(1.2); opacity: 1; } 80% { transform: scale(1); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+    @keyframes text-float { 0% { transform: translateY(20px); opacity: 0; } 20% { transform: translateY(0); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-20px); opacity: 0; } }
+    @keyframes text-shake { 0%, 100% { opacity: 0; } 20% { opacity: 1; } 0%, 10%, 20%, 30%, 40%, 50%, 60%, 70%, 80%, 100% { transform: translateX(0); } 5% { transform: translateX(-5px); } 15% { transform: translateX(5px); } /* ... more shakes ... */ }
+    @keyframes text-glow { 0%, 100% { opacity: 0; text-shadow: 0 0 5px #fff; } 50% { opacity: 1; text-shadow: 0 0 30px #fff, 0 0 50px var(--rarity-divine); } }
+    @keyframes light-rays { 0% { transform: translateY(-100%); opacity: 0; } 20% { transform: translateY(0); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(100%); opacity: 0; } }
+    @keyframes particle-burst { from { transform: scale(0); opacity: 1; } to { transform: scale(3); opacity: 0; } }
+    @keyframes transcendent-pulse { 0% { opacity: 0; background-size: 0% 0%; } 20% { opacity: 1; background-size: 200% 200%; } 80% { opacity: 1; background-size: 200% 200%; } 100% { opacity: 0; background-size: 0% 0%; } }
+    @keyframes eldritch-swirl { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes cosmic-bg { 0%, 100% { opacity: 0; } 10%, 90% { opacity: 1; } }
+</style>
 </head>
 <body>
+<div id="rarity-animation-overlay"><div class="rarity-animation-content"></div></div>
 
-    <div id="rarity-animation-overlay"><div class="rarity-animation-content"></div></div>
-    
-    <div id="loader-container">
-        <svg class="loader" viewBox="0 0 50 50"><circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="2.5"></circle></svg>
-        <div class="progress-bar-container"><div id="progress-bar-fill" class="progress-bar-fill"></div></div>
-        <div class="progress-text-container">
-            <span id="loader-percent">0%</span>
-            <span id="loader-time">(残り: 0秒)</span>
+<div id="loader-container">
+    <svg class="loader" viewBox="0 0 50 50"><circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="2.5"></circle></svg>
+    <div class="progress-bar-container"><div id="progress-bar-fill" class="progress-bar-fill"></div></div>
+    <div class="progress-text-container">
+        <span id="loader-percent">0%</span>
+        <span id="loader-time">(残り: 0秒)</span>
+    </div>
+</div>
+
+<header class="top-buttons">
+    <button id="rarity-info-button" class="icon-button" title="レア度情報"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path><path fill="currentColor" d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"></path></svg></button>
+    <button id="help-button" class="icon-button" title="遊び方"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"/></svg></button>
+    <button id="stats-button" class="icon-button" title="統計"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-up-arrow" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"/></svg></button>
+    <button id="collection-button" class="icon-button" title="コレクション"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-boxes" viewBox="0 0 16 16"><path d="M7.752.066a.5.5 0 0 1 .496 0l3.75 2.143a.5.5 0 0 1 .252.434v3.995l3.498 2A.5.5 0 0 1 16 9.07v4.286a.5.5 0 0 1-.252.434l-3.75 2.143a.5.5 0 0 1-.496 0l-3.502-2-3.502 2.001a.5.5 0 0 1-.496 0l-3.75-2.143A.5.5 0 0 1 0 13.357V9.071a.5.5 0 0 1 .252-.434L3.75 6.638V2.643a.5.5 0 0 1 .252-.434zM4.25 7.504 1.508 9.071l2.742 1.567 2.742-1.567zM7.5 9.933l-2.75 1.571v3.134l2.75-1.571zm1 3.134 2.75 1.571v-3.134L8.5 9.933zm.508-3.996 2.742 1.567 2.742-1.567-2.742-1.567zm2.242-2.433V3.504L8.5 5.076V8.21zM7.5 8.21V5.076L4.75 3.504v3.134zM5.258 2.643 8 4.21l2.742-1.567L8 1.076zM15 9.933l-2.75 1.571v3.134L15 13.067zM3.75 14.638v-3.134L1 9.933v3.134z"/></svg></button>
+    <button id="achievements-button" class="icon-button" title="実績"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trophy-fill" viewBox="0 0 16 16"><path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935"/></svg></button>
+    <button id="settings-button" class="icon-button" title="設定"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527-1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764-.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/></svg></button>
+</header>
+
+<main>
+    <h1>RNGブロックゲーム</h1>
+    <div id="star-display" class="star-display">
+        <div class="star-line">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stars" viewBox="0 0 16 16"><path d="M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.828zM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.73 1.73 0 0 0 4.593 5.69l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.69A1.73 1.73 0 0 0 2.31 4.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.73 1.73 0 0 0 3.407 2.31zM10.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732L9.1 2.137a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z"/></svg>
+            <span id="star-count">0</span>
+            <span id="star-total" style="font-size: 1.2rem; opacity: 0.8;">/ 100,000,000</span>
+        </div>
+        <div class="star-progress">
+            (<span id="star-percent">0.00</span>%)
         </div>
     </div>
+    <div class="result-container" id="result-container">
+        <div id="result-block"><p>「回す」ボタンを押して始めよう！</p></div>
+    </div>
+    <button id="roll-button">回す</button>
+    <div id="unlock-features-container"></div>
+</main>
 
-    <header class="top-buttons">
-        <button id="rarity-info-button" class="icon-button" title="レア度情報"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path><path fill="currentColor" d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"></path></svg></button>
-        <button id="help-button" class="icon-button" title="遊び方"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"/></svg></button>
-        <button id="stats-button" class="icon-button" title="統計"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-up-arrow" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"/></svg></button>
-        <button id="collection-button" class="icon-button" title="コレクション"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-boxes" viewBox="0 0 16 16"><path d="M7.752.066a.5.5 0 0 1 .496 0l3.75 2.143a.5.5 0 0 1 .252.434v3.995l3.498 2A.5.5 0 0 1 16 9.07v4.286a.5.5 0 0 1-.252.434l-3.75 2.143a.5.5 0 0 1-.496 0l-3.502-2-3.502 2.001a.5.5 0 0 1-.496 0l-3.75-2.143A.5.5 0 0 1 0 13.357V9.071a.5.5 0 0 1 .252-.434L3.75 6.638V2.643a.5.5 0 0 1 .252-.434zM4.25 7.504 1.508 9.071l2.742 1.567 2.742-1.567zM7.5 9.933l-2.75 1.571v3.134l2.75-1.571zm1 3.134 2.75 1.571v-3.134L8.5 9.933zm.508-3.996 2.742 1.567 2.742-1.567-2.742-1.567zm2.242-2.433V3.504L8.5 5.076V8.21zM7.5 8.21V5.076L4.75 3.504v3.134zM5.258 2.643 8 4.21l2.742-1.567L8 1.076zM15 9.933l-2.75 1.571v3.134L15 13.067zM3.75 14.638v-3.134L1 9.933v3.134z"/></svg></button>
-        <button id="achievements-button" class="icon-button" title="実績"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trophy-fill" viewBox="0 0 16 16"><path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935"/></svg></button>
-        <button id="settings-button" class="icon-button" title="設定"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527-1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764-.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/></svg></button>
-    </header>
+<div id="settings-modal" class="modal"></div>
+<div id="collection-modal" class="modal"></div>
+<div id="achievements-modal" class="modal"></div>
+<div id="detail-modal" class="modal"></div>
+<div id="stats-modal" class="modal"></div>
+<div id="help-modal" class="modal"></div>
+<div id="rarity-info-modal" class="modal"></div>
 
-    <main>
-        <h1>RNGブロックゲーム</h1>
-        <div id="star-display" class="star-display">
-            <div class="star-line">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stars" viewBox="0 0 16 16"><path d="M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.828zM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.73 1.73 0 0 0 4.593 5.69l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.69A1.73 1.73 0 0 0 2.31 4.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.73 1.73 0 0 0 3.407 2.31zM10.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732L9.1 2.137a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z"/></svg>
-                <span id="star-count">0</span>
-                <span id="star-total" style="font-size: 1.2rem; opacity: 0.8;">/ 100,000,000</span>
+<template id="settings-modal-template">
+    <div class="modal-content">
+        <div class="modal-header"><h2>設定</h2><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
+        <div class="modal-body">
+            <div class="setting-item">
+                <span>エピック以上のブロックが出た時の特別演出</span>
+                <label class="switch">
+                    <input type="checkbox" id="animation-toggle">
+                    <span class="slider"></span>
+                </label>
             </div>
-            <div class="star-progress">
-                (<span id="star-percent">0.00</span>%)
-            </div>
-        </div>
-        <div class="result-container" id="result-container">
-            <div id="result-block"><p>「回す」ボタンを押して始めよう！</p></div>
-        </div>
-        <button id="roll-button">回す</button>
-        <div id="unlock-features-container"></div>
-    </main>
-    
-    <div id="settings-modal" class="modal"></div>
-    <div id="collection-modal" class="modal"></div>
-    <div id="achievements-modal" class="modal"></div>
-    <div id="detail-modal" class="modal"></div>
-    <div id="stats-modal" class="modal"></div>
-    <div id="help-modal" class="modal"></div>
-    <div id="rarity-info-modal" class="modal"></div>
-
-    <template id="settings-modal-template">
-        <div class="modal-content">
-            <div class="modal-header"><h2>設定</h2><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
-            <div class="modal-body">
-                <div class="setting-item">
-                    <span>エピック以上のブロックが出た時の特別演出</span>
-                    <label class="switch">
-                        <input type="checkbox" id="animation-toggle">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div id="cheat-section">
-                    <p id="cheat-warning"><b>警告:</b> この機能を使うのはお勧めしません。ゲームバランスが崩壊するため、自己責任でお願いします。</p>
-                    <button id="show-cheat-btn" class="btn">チートメニューを開く</button>
-                    <div id="cheat-content" style="display:none;">
-                        <div class="cheat-control"><button id="cheat-unlock-features" class="btn">1. 全ての機能をアンロックする</button></div>
-                        <div class="cheat-control"><button id="cheat-unlock-blocks" class="btn">2. 全てのブロックを入手する</button></div>
-                        <div class="cheat-control"><button id="cheat-unlock-achievements" class="btn">3. 全ての実績をアンロックする</button></div>
-                        <div class="cheat-control"><button id="cheat-super-multi-roll" class="btn">4. 複数回ロールの上限を解放</button></div>
-                        <div class="cheat-control"><button id="cheat-set-stars" class="btn">5. 星の値を設定する</button></div>
-                    </div>
-                </div>
-                 <div id="reset-section">
-                    <button id="reset-data-btn" class="btn btn-danger">全データをリセットする</button>
+            <div id="cheat-section">
+                <p id="cheat-warning"><b>警告:</b> この機能を使うのはお勧めしません。ゲームバランスが崩壊するため、自己責任でお願いします。</p>
+                <button id="show-cheat-btn" class="btn">チートメニューを開く</button>
+                <div id="cheat-content" style="display:none;">
+                    <div class="cheat-control"><button id="cheat-unlock-features" class="btn">1. 全ての機能をアンロックする</button></div>
+                    <div class="cheat-control"><button id="cheat-unlock-blocks" class="btn">2. 全てのブロックを入手する</button></div>
+                    <div class="cheat-control"><button id="cheat-unlock-achievements" class="btn">3. 全ての実績をアンロックする</button></div>
+                    <div class="cheat-control"><button id="cheat-super-multi-roll" class="btn">4. 複数回ロールの上限を解放</button></div>
+                    <div class="cheat-control"><button id="cheat-set-stars" class="btn">5. 星の値を設定する</button></div>
                 </div>
             </div>
+             <div id="reset-section">
+                <button id="reset-data-btn" class="btn btn-danger">全データをリセットする</button>
+            </div>
         </div>
-    </template>
+    </div>
+</template>
 
-    <template id="collection-modal-template">
-        <div class="modal-content">
-            <div class="modal-header"><div><h2>ブロックコレクション</h2><div id="collection-progress" class="progress-text"></div></div><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
-            <div id="collection-controls">
-                <div class="filter-group">
-                    <div class="search-container">
-                        <input type="text" id="search-input" placeholder="名前で検索...">
-                        <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></svg></span>
-                    </div>
-                    <select id="rarity-filter"><option value="all">全てのレア度</option></select>
+<template id="collection-modal-template">
+    <div class="modal-content">
+        <div class="modal-header"><div><h2>ブロックコレクション</h2><div id="collection-progress" class="progress-text"></div></div><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
+        <div id="collection-controls">
+            <div class="filter-group">
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="名前で検索...">
+                    <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></svg></span>
                 </div>
-                <div class="filter-group">
-                    <select id="sort-order"><option value="logProb-desc">レア度順 (高→低)</option><option value="logProb-asc">レア度順 (低→高)</option><option value="timestamp-desc">入手順 (新→古)</option><option value="timestamp-asc">入手順 (古→新)</option><option value="name-asc">名前順 (昇順)</option><option value="name-desc">名前順 (降順)</option></select>
-                    <select id="discovered-filter"><option value="all">全て表示</option><option value="discovered">入手済みのみ</option><option value="undiscovered">未入手のみ</option></select>
-                </div>
+                <select id="rarity-filter"><option value="all">全てのレア度</option></select>
             </div>
-            <div class="modal-body" id="collection-grid"></div>
-            <div class="pagination-controls" id="collection-pagination"><button id="collection-prev" class="icon-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/></svg></button><span id="collection-page-info"></span><button id="collection-next" class="icon-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg></button></div>
-        </div>
-    </template>
-
-    <template id="achievements-modal-template">
-        <div class="modal-content">
-             <div class="modal-header"><div><h2>実績</h2><div id="achievement-progress" class="progress-text"></div></div><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
-            <div class="modal-body" id="achievement-list"></div>
-            <div class="pagination-controls" id="achievement-pagination"><button id="achievement-prev" class="icon-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/></svg></button><span id="achievement-page-info"></span><button id="achievement-next" class="icon-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg></button></div>
-        </div>
-    </template>
-    
-    <template id="detail-modal-template">
-        <div class="modal-content">
-            <div class="modal-header"><h2>ブロック詳細</h2><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
-            <div class="modal-body">
-                <div id="detail-card-container"></div>
-                <div id="detail-info"></div>
-                <div id="detail-actions"></div>
+            <div class="filter-group">
+                <select id="sort-order"><option value="logProb-desc">レア度順 (高→低)</option><option value="logProb-asc">レア度順 (低→高)</option><option value="timestamp-desc">入手順 (新→古)</option><option value="timestamp-asc">入手順 (古→新)</option><option value="name-asc">名前順 (昇順)</option><option value="name-desc">名前順 (降順)</option></select>
+                <select id="discovered-filter"><option value="all">全て表示</option><option value="discovered">入手済みのみ</option><option value="undiscovered">未入手のみ</option></select>
             </div>
         </div>
-    </template>
-    
-    <template id="stats-modal-template">
-        <div class="modal-content">
-            <div class="modal-header"><h2>統計情報</h2><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
-            <div class="modal-body" id="stats-info"></div>
+        <div class="modal-body" id="collection-grid"></div>
+        <div class="pagination-controls" id="collection-pagination"><button id="collection-prev" class="icon-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/></svg></button><span id="collection-page-info"></span><button id="collection-next" class="icon-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg></button></div>
+    </div>
+</template>
+
+<template id="achievements-modal-template">
+    <div class="modal-content">
+         <div class="modal-header"><div><h2>実績</h2><div id="achievement-progress" class="progress-text"></div></div><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
+        <div class="modal-body" id="achievement-list"></div>
+        <div class="pagination-controls" id="achievement-pagination"><button id="achievement-prev" class="icon-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/></svg></button><span id="achievement-page-info"></span><button id="achievement-next" class="icon-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg></button></div>
+    </div>
+</template>
+
+<template id="detail-modal-template">
+    <div class="modal-content">
+        <div class="modal-header"><h2>ブロック詳細</h2><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
+        <div class="modal-body">
+            <div id="detail-card-container"></div>
+            <div id="detail-info"></div>
+            <div id="detail-actions"></div>
         </div>
-    </template>
+    </div>
+</template>
 
-    <template id="help-modal-template">
-        <div class="modal-content">
-            <div class="modal-header"><h2>遊び方</h2><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
-            <div class="modal-body" id="help-info" style="text-align: left; line-height: 1.8;">
-                <h3>基本ルール</h3>
-                <p>「回す」ボタンを押して、様々な確率のブロックを見つけましょう。見つけたブロックはコレクションに追加されます。</p>
-                <br>
-                <h3>星システム</h3>
-                <p>新しいブロックを初めて見つけると、そのブロックのレア度に応じて「星」を獲得できます。星を集めて、自分の進捗を確かめましょう！</p>
-                <br>
-                 <h3>演出</h3>
-                <p>「エピック」以上のレア度のブロックをその回のロールで最もレアなものとして入手すると、特別な演出が表示されます。演出は設定からON/OFFを切り替えられます。</p>
-                <br>
-                <h3>機能のアンロック</h3>
-                <p>特定のレア度のブロックを初めて見つけると、便利な機能が自動で解放されます。</p>
-                <ul>
-                    <li><b>オートロール (1/100以上):</b> ボタンを自動で押し続けてくれます。</li>
-                    <li><b>複数回ロール (1/10,000以上):</b> 一度にまとめてロールできるようになります。スライダーで2倍ずつ回数を変更できます。</li>
-                </ul>
-                <br>
-                <h3>画面のボタン</h3>
-                <ul style="list-style: none; padding-left: 0;">
-                    <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path><path fill="currentColor" d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"></path></svg> <b>レア度情報:</b> 各レア度の確率の目安を確認できます。</li>
-                    <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"/></svg> <b>遊び方:</b> この画面を表示します。</li>
-                    <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-up-arrow" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"/></svg> <b>統計:</b> ゲームのプレイ記録を確認できます。</li>
-                    <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-boxes" viewBox="0 0 16 16"><path d="M7.752.066a.5.5 0 0 1 .496 0l3.75 2.143a.5.5 0 0 1 .252.434v3.995l3.498 2A.5.5 0 0 1 16 9.07v4.286a.5.5 0 0 1-.252.434l-3.75 2.143a.5.5 0 0 1-.496 0l-3.502-2-3.502 2.001a.5.5 0 0 1-.496 0l-3.75-2.143A.5.5 0 0 1 0 13.357V9.071a.5.5 0 0 1 .252-.434L3.75 6.638V2.643a.5.5 0 0 1 .252-.434zM4.25 7.504 1.508 9.071l2.742 1.567 2.742-1.567zM7.5 9.933l-2.75 1.571v3.134l2.75-1.571zm1 3.134 2.75 1.571v-3.134L8.5 9.933zm.508-3.996 2.742 1.567 2.742-1.567-2.742-1.567zm2.242-2.433V3.504L8.5 5.076V8.21zM7.5 8.21V5.076L4.75 3.504v3.134zM5.258 2.643 8 4.21l2.742-1.567L8 1.076zM15 9.933l-2.75 1.571v3.134L15 13.067zM3.75 14.638v-3.134L1 9.933v3.134z"/></svg> <b>コレクション:</b> 見つけたブロックを一覧で確認できます。</li>
-                    <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trophy-fill" viewBox="0 0 16 16"><path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935"/></svg> <b>実績:</b> 特定の条件を達成すると実績が解放されます。</li>
-                    <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527-1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764-.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/></svg> <b>設定:</b> ゲームの動作やデータを管理できます。</li>
-                </ul>
-            </div>
+<template id="stats-modal-template">
+    <div class="modal-content">
+        <div class="modal-header"><h2>統計情報</h2><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
+        <div class="modal-body" id="stats-info"></div>
+    </div>
+</template>
+
+<template id="help-modal-template">
+    <div class="modal-content">
+        <div class="modal-header"><h2>遊び方</h2><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
+        <div class="modal-body" id="help-info" style="text-align: left; line-height: 1.8;">
+            <h3>基本ルール</h3>
+            <p>「回す」ボタンを押して、様々な確率のブロックを見つけましょう。見つけたブロックはコレクションに追加されます。</p>
+            <br>
+            <h3>星システム</h3>
+            <p>新しいブロックを初めて見つけると、そのブロックのレア度に応じて「星」を獲得できます。星を集めて、自分の進捗を確かめましょう！</p>
+            <br>
+             <h3>演出</h3>
+            <p>「エピック」以上のレア度のブロックをその回のロールで最もレアなものとして入手すると、特別な演出が表示されます。演出は設定からON/OFFを切り替えられます。</p>
+            <br>
+            <h3>機能のアンロック</h3>
+            <p>特定のレア度のブロックを初めて見つけると、便利な機能が自動で解放されます。</p>
+            <ul>
+                <li><b>オートロール (1/100以上):</b> ボタンを自動で押し続けてくれます。</li>
+                <li><b>複数回ロール (1/10,000以上):</b> 一度にまとめてロールできるようになります。スライダーで2倍ずつ回数を変更できます。</li>
+            </ul>
+            <br>
+            <h3>画面のボタン</h3>
+            <ul style="list-style: none; padding-left: 0;">
+                <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path><path fill="currentColor" d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"></path></svg> <b>レア度情報:</b> 各レア度の確率の目安を確認できます。</li>
+                <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"/></svg> <b>遊び方:</b> この画面を表示します。</li>
+                <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-up-arrow" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"/></svg> <b>統計:</b> ゲームのプレイ記録を確認できます。</li>
+                <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-boxes" viewBox="0 0 16 16"><path d="M7.752.066a.5.5 0 0 1 .496 0l3.75 2.143a.5.5 0 0 1 .252.434v3.995l3.498 2A.5.5 0 0 1 16 9.07v4.286a.5.5 0 0 1-.252.434l-3.75 2.143a.5.5 0 0 1-.496 0l-3.502-2-3.502 2.001a.5.5 0 0 1-.496 0l-3.75-2.143A.5.5 0 0 1 0 13.357V9.071a.5.5 0 0 1 .252-.434L3.75 6.638V2.643a.5.5 0 0 1 .252-.434zM4.25 7.504 1.508 9.071l2.742 1.567 2.742-1.567zM7.5 9.933l-2.75 1.571v3.134l2.75-1.571zm1 3.134 2.75 1.571v-3.134L8.5 9.933zm.508-3.996 2.742 1.567 2.742-1.567-2.742-1.567zm2.242-2.433V3.504L8.5 5.076V8.21zM7.5 8.21V5.076L4.75 3.504v3.134zM5.258 2.643 8 4.21l2.742-1.567L8 1.076zM15 9.933l-2.75 1.571v3.134L15 13.067zM3.75 14.638v-3.134L1 9.933v3.134z"/></svg> <b>コレクション:</b> 見つけたブロックを一覧で確認できます。</li>
+                <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trophy-fill" viewBox="0 0 16 16"><path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935"/></svg> <b>実績:</b> 特定の条件を達成すると実績が解放されます。</li>
+                <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527-1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764-.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/></svg> <b>設定:</b> ゲームの動作やデータを管理できます。</li>
+            </ul>
         </div>
-    </template>
-    
-    <template id="rarity-info-modal-template">
-        <div class="modal-content">
-            <div class="modal-header"><h2>レア度情報</h2><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
-            <div class="modal-body" id="rarity-info-body"></div>
-        </div>
-    </template>
+    </div>
+</template>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            let BLOCKS = [];
-            const TOTAL_BLOCKS = 10000;
-            let ACHIEVEMENTS = [];
-            const TOTAL_ACHIEVEMENTS = 300;
-            const ITEMS_PER_PAGE = 100;
-            let TOTAL_STARS = 0;
+<template id="rarity-info-modal-template">
+    <div class="modal-content">
+        <div class="modal-header"><h2>レア度情報</h2><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
+        <div class="modal-body" id="rarity-info-body"></div>
+    </div>
+</template>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let BLOCKS = [];
+        const TOTAL_BLOCKS = 10000;
+        let ACHIEVEMENTS = [];
+        const TOTAL_ACHIEVEMENTS = 300;
+        const ITEMS_PER_PAGE = 100;
+        let TOTAL_STARS = 0;
+        
+        const RARITY_DATA = { "コモン": {color:"var(--rarity-common)",threshold:0}, "アンコモン": {color:"var(--rarity-uncommon)",threshold:1.5}, "レア": {color:"var(--rarity-rare)",threshold:3}, "エピック": {color:"var(--rarity-epic)",threshold:5}, "レジェンダリー": {color:"var(--rarity-legendary)",threshold:6.5}, "ミシカル": {color:"var(--rarity-mythical)",threshold:8}, "ディバイン": {color:"var(--rarity-divine)",threshold:11}, "セレスティアル": {color:"var(--rarity-celestial)",threshold:20}, "トランセンデント": {color:"var(--rarity-transcendent)",threshold:40}, "エルドリッチ": {color:"var(--rarity-eldritch)",threshold:80}, "コズミック": {color:"var(--rarity-cosmic)",threshold:200}, };
+        const RARITY_ORDER = Object.keys(RARITY_DATA);
+        const getRarity = (logProb) => { let rarity = "コモン"; for (const r in RARITY_DATA) { if (logProb >= RARITY_DATA[r].threshold) rarity = r; } return rarity; };
+        
+        const RARITY_STARS = { "コモン": 1, "アンコモン": 5, "レア": 25, "エピック": 100, "レジェンダリー": 500, "ミシカル": 2500, "ディバイン": 10000, "セレスティアル": 50000, "トランセンデント": 250000, "エルドリッチ": 1000000, "コズミック": 5000000, };
+        const getStarsForBlock = (block) => { if (!block || !RARITY_STARS[block.rarity]) return 0; return RARITY_STARS[block.rarity]; };
+
+        const createBlocks = () => {
+            const manual = [
+                { id: 0, name: "石", logProb: Math.log10(2) },
+                { id: 1, name: "草", logProb: Math.log10(5) },
+                { id: 2, name: "鉄", logProb: Math.log10(25) },
+                { id: 3, name: "金", logProb: 2 },
+                { id: 4, name: "ダイヤモンド", logProb: 3 },
+                { id: 5, name: "エメラルド", logProb: 4 },
+                { id: 6, name: "アメジスト", logProb: 5 },
+                { id: 7, name: "ルビー", logProb: 6 },
+                { id: 8, name: "サファイア", logProb: 7.5 },
+                { id: 9, name: "隕石", logProb: 9 },
+                { id: 10, name: "星屑", logProb: 12 },
+                { id: 11, name: "星雲", logProb: 15 },
+                { id: 12, name: "反物質", logProb: 25 },
+                { id: 13, name: "虚無", logProb: 50 },
+                { id: 14, name: "特異点", logProb: 100 },
+                { id: 15, name: "宇宙ひも", logProb: 300 },
+                { id: 16, name: "時空の裂け目", logProb: 10000 },
+                { id: 17, name: "因果律の崩壊", logProb: 50000 },
+                { id: 18, name: "多元宇宙の泡", logProb: 250000 },
+                { id: 19, name: "究極真理", logProb: 1000000 },
+                { id: 20, name: "概念の具現化", logProb: 10000000 },
+                { id: 21, name: "全知全能", logProb: 100000000 },
+                { id: 22, name: "作者の気まぐれ", logProb: 1000000000 },
+                { id: 23, name: "最後の一つ", logProb: 1e10 },
+            ];
+            let all = manual.map(b => ({ ...b, rarity: getRarity(b.logProb) }));
+            const remaining = TOTAL_BLOCKS - all.length;
+            for (let i = 0; i < remaining; i++) {
+                const id = all.length; const logProb = 0.4 + (5000 - 0.4) * Math.pow(i / (remaining - 1), 4);
+                all.push({ id: id, name: `物質 #${i + 1}`, logProb: logProb, rarity: getRarity(logProb) });
+            }
+            BLOCKS = all.sort((a, b) => b.logProb - a.logProb);
             
-            const RARITY_DATA = { "コモン": {color:"var(--rarity-common)",threshold:0}, "アンコモン": {color:"var(--rarity-uncommon)",threshold:1.5}, "レア": {color:"var(--rarity-rare)",threshold:3}, "エピック": {color:"var(--rarity-epic)",threshold:5}, "レジェンダリー": {color:"var(--rarity-legendary)",threshold:6.5}, "ミシカル": {color:"var(--rarity-mythical)",threshold:8}, "ディバイン": {color:"var(--rarity-divine)",threshold:11}, "セレスティアル": {color:"var(--rarity-celestial)",threshold:20}, "トランセンデント": {color:"var(--rarity-transcendent)",threshold:40}, "エルドリッチ": {color:"var(--rarity-eldritch)",threshold:80}, "コズミック": {color:"var(--rarity-cosmic)",threshold:200}, };
-            const RARITY_ORDER = Object.keys(RARITY_DATA);
-            const getRarity = (logProb) => { let rarity = "コモン"; for (const r in RARITY_DATA) { if (logProb >= RARITY_DATA[r].threshold) rarity = r; } return rarity; };
-            
-            const RARITY_STARS = { "コモン": 1, "アンコモン": 5, "レア": 25, "エピック": 100, "レジェンダリー": 500, "ミシカル": 2500, "ディバイン": 10000, "セレスティアル": 50000, "トランセンデント": 250000, "エルドリッチ": 1000000, "コズミック": 5000000, };
-            const getStarsForBlock = (block) => { if (!block || !RARITY_STARS[block.rarity]) return 0; return RARITY_STARS[block.rarity]; };
+            TOTAL_STARS = BLOCKS.reduce((sum, block) => sum + getStarsForBlock(block), 0);
+        };
 
-            const createBlocks = () => {
-                const manual = [
-                    { id: 0, name: "石", logProb: Math.log10(2) },
-                    { id: 1, name: "草", logProb: Math.log10(5) },
-                    { id: 2, name: "鉄", logProb: Math.log10(25) },
-                    { id: 3, name: "金", logProb: 2 },
-                    { id: 4, name: "ダイヤモンド", logProb: 3 },
-                    { id: 5, name: "エメラルド", logProb: 4 },
-                    { id: 6, name: "アメジスト", logProb: 5 },
-                    { id: 7, name: "ルビー", logProb: 6 },
-                    { id: 8, name: "サファイア", logProb: 7.5 },
-                    { id: 9, name: "隕石", logProb: 9 },
-                    { id: 10, name: "星屑", logProb: 12 },
-                    { id: 11, name: "星雲", logProb: 15 },
-                    { id: 12, name: "反物質", logProb: 25 },
-                    { id: 13, name: "虚無", logProb: 50 },
-                    { id: 14, name: "特異点", logProb: 100 },
-                    { id: 15, name: "宇宙ひも", logProb: 300 },
-                    { id: 16, name: "時空の裂け目", logProb: 10000 },
-                    { id: 17, name: "因果律の崩壊", logProb: 50000 },
-                    { id: 18, name: "多元宇宙の泡", logProb: 250000 },
-                    { id: 19, name: "究極真理", logProb: 1000000 },
-                    { id: 20, name: "概念の具現化", logProb: 10000000 },
-                    { id: 21, name: "全知全能", logProb: 100000000 },
-                    { id: 22, name: "作者の気まぐれ", logProb: 1000000000 },
-                    { id: 23, name: "最後の一つ", logProb: 1e10 },
-                ];
-                let all = manual.map(b => ({ ...b, rarity: getRarity(b.logProb) }));
-                const remaining = TOTAL_BLOCKS - all.length;
-                for (let i = 0; i < remaining; i++) {
-                    const id = all.length; const logProb = 0.4 + (5000 - 0.4) * Math.pow(i / (remaining - 1), 4);
-                    all.push({ id: id, name: `物質 #${i + 1}`, logProb: logProb, rarity: getRarity(logProb) });
-                }
-                BLOCKS = all.sort((a, b) => b.logProb - a.logProb);
-                
-                TOTAL_STARS = BLOCKS.reduce((sum, block) => sum + getStarsForBlock(block), 0);
-            };
-
-            const generateCleanGoals = (max, baseMultipliers = [1, 2, 5]) => {
-                const goals = new Set([1]);
-                let power = 1;
-                while (power <= max) {
-                    for (const mult of baseMultipliers) {
-                        const goal = mult * power;
-                        if (goal <= max) {
-                            goals.add(goal);
-                        }
-                    }
-                    if (power >= max) break;
-                    power *= 10;
-                }
-                goals.add(max);
-                return Array.from(goals).sort((a, b) => a - b);
-            };
-            
-            const createAchievements = () => {
-                let tempAchievements = [];
-                RARITY_ORDER.slice(1).forEach(rarity => {
-                    tempAchievements.push({ id: `find_${rarity}`, name: `${rarity}の発見`, desc: `${rarity}のブロックを初めて見つける。`, type: 'discovery_rarity', rarity });
-                });
-                
-                RARITY_ORDER.forEach(rarity => {
-                    if (RARITY_ORDER.indexOf(rarity) >= RARITY_ORDER.indexOf('エピック')) {
-                        tempAchievements.push({
-                            id: `view_animation_${rarity}`,
-                            name: `荘厳なる光景: ${rarity}`,
-                            desc: `${rarity}のブロックを入手した際の演出を見る。`,
-                            type: 'view_animation',
-                            rarity: rarity
-                        });
-                    }
-                });
-
-                const rollGoals = generateCleanGoals(1000000000000);
-                const discoveryGoals = generateCleanGoals(TOTAL_BLOCKS);
-                const starGoals = generateCleanGoals(TOTAL_STARS);
-
-                rollGoals.forEach((goal, index) => tempAchievements.push({ id: `roll_${goal}`, name: `ローラーマスター ${index + 1}`, desc: `${goal.toLocaleString()}回ロールする。`, type: 'rolls', goal }));
-                discoveryGoals.forEach((goal, index) => tempAchievements.push({ id: `discover_${goal}`, name: `探求の旅人 ${index + 1}`, desc: `${goal.toLocaleString()}種類のブロックを発見する。`, type: 'discovery_count', goal }));
-                starGoals.forEach((goal, index) => tempAchievements.push({ id: `stars_${goal}`, name: `星の収集家 ${index + 1}`, desc: `${goal.toLocaleString()}個の星を集める。`, type: 'stars', goal }));
-
-                tempAchievements.sort((a,b) => (a.type.localeCompare(b.type)) || (a.goal || 0) - (a.goal || 0) || (a.rarity ? RARITY_ORDER.indexOf(a.rarity) : 0) - (b.rarity ? RARITY_ORDER.indexOf(b.rarity) : 0));
-                
-                const uniqueAchievements = [];
-                const seenIds = new Set();
-                for (const ach of tempAchievements) {
-                    if (!seenIds.has(ach.id)) {
-                        uniqueAchievements.push(ach);
-                        seenIds.add(ach.id);
+        const generateCleanGoals = (max, baseMultipliers = [1, 2, 5]) => {
+            const goals = new Set([1]);
+            let power = 1;
+            while (power <= max) {
+                for (const mult of baseMultipliers) {
+                    const goal = mult * power;
+                    if (goal <= max) {
+                        goals.add(goal);
                     }
                 }
-                
-                if (uniqueAchievements.length > TOTAL_ACHIEVEMENTS) {
-                    const keepIndices = new Set();
-                    for(let i = 0; i < TOTAL_ACHIEVEMENTS; i++) {
-                        keepIndices.add(Math.floor(i * (uniqueAchievements.length / TOTAL_ACHIEVEMENTS)));
-                    }
-                    ACHIEVEMENTS = uniqueAchievements.filter((_, index) => keepIndices.has(index));
-                } else {
-                    ACHIEVEMENTS = uniqueAchievements;
-                }
-            };
-
-            const formatPlayTime = (ms) => {
-                if (ms <= 0) return '0秒 (0.000秒)';
-                const totalSeconds = ms / 1000;
-
-                let s = totalSeconds;
-                const years = Math.floor(s / 31536000); s %= 31536000;
-                const months = Math.floor(s / 2592000); s %= 2592000;
-                const days = Math.floor(s / 86400); s %= 86400;
-                const hours = Math.floor(s / 3600); s %= 3600;
-                const minutes = Math.floor(s / 60);
-                const seconds = Math.floor(s % 60);
-
-                const parts = [];
-                if (years > 0) parts.push(`${years}年`);
-                if (months > 0) parts.push(`${months}ヶ月`);
-                if (days > 0) parts.push(`${days}日`);
-                if (hours > 0) parts.push(`${hours}時間`);
-                if (minutes > 0) parts.push(`${minutes}分`);
-                if (seconds > 0 || parts.length === 0) parts.push(`${seconds}秒`);
-                
-                const timeString = parts.join('');
-
-                let parenthetical;
-                if (totalSeconds >= 31536000) {
-                    parenthetical = `(${(totalSeconds / 31536000).toFixed(3)}年)`;
-                } else if (totalSeconds >= 2592000) {
-                    parenthetical = `(${(totalSeconds / 2592000).toFixed(3)}ヶ月)`;
-                } else if (totalSeconds >= 86400) {
-                    parenthetical = `(${(totalSeconds / 86400).toFixed(3)}日)`;
-                } else if (totalSeconds >= 3600) {
-                    parenthetical = `(${(totalSeconds / 3600).toFixed(3)}時間)`;
-                } else if (totalSeconds >= 60) {
-                    parenthetical = `(${(totalSeconds / 60).toFixed(3)}分)`;
-                } else {
-                    parenthetical = `(${(totalSeconds).toFixed(3)}秒)`;
-                }
-                return `${timeString} ${parenthetical}`;
-            };
-
-            const UNLOCK_THRESHOLDS = { autoRoll: 2, multiRoll: 4 };
-            const dom = new Proxy({}, { get: (_, id) => document.getElementById(id) });
-            let playerData, isRolling = false, autoRollInterval = null, collectionCurrentPage = 1, achievementsCurrentPage = 1;
-            let activeModalUpdateCallback = null;
+                if (power >= max) break;
+                power *= 10;
+            }
+            goals.add(max);
+            return Array.from(goals).sort((a, b) => a - b);
+        };
+        
+        const createAchievements = () => {
+            let tempAchievements = [];
+            RARITY_ORDER.slice(1).forEach(rarity => {
+                tempAchievements.push({ id: `find_${rarity}`, name: `${rarity}の発見`, desc: `${rarity}のブロックを初めて見つける。`, type: 'discovery_rarity', rarity });
+            });
             
-            const formatProb = (logProb) => {
-                if (logProb <= 0) return "---";
-                if (logProb === 1e10) {
-                    return `<span>1 / 10^10^10</span>`;
+            RARITY_ORDER.forEach(rarity => {
+                if (RARITY_ORDER.indexOf(rarity) >= RARITY_ORDER.indexOf('エピック')) {
+                    tempAchievements.push({
+                        id: `view_animation_${rarity}`,
+                        name: `荘厳なる光景: ${rarity}`,
+                        desc: `${rarity}のブロックを入手した際の演出を見る。`,
+                        type: 'view_animation',
+                        rarity: rarity
+                    });
                 }
-                const useExponentThreshold = 6;
-                let probFractionStr;
-                if (logProb >= useExponentThreshold) {
-                    probFractionStr = `1 / 10^${logProb.toLocaleString('ja-JP', { maximumFractionDigits: 0 })}`;
-                } else {
-                    const n = Math.pow(10, logProb);
-                    probFractionStr = `1 / ${n.toLocaleString('ja-JP', { maximumFractionDigits: 0 })}`;
-                }
-                let pctStr;
-                const pct = Math.pow(10, 2 - logProb);
-                const pctExponentThreshold = 1e-10;
-                if (pct < pctExponentThreshold && logProb > 2) {
-                    const pctLog = 2 - logProb;
-                    const exponent = Math.floor(pctLog);
-                    const mantissa = Math.pow(10, pctLog - exponent);
-                    pctStr = `${mantissa.toFixed(2)} × 10^${exponent}%`;
-                } else {
-                    pctStr = `${pct.toLocaleString('ja-JP', { maximumSignificantDigits: 4 })}%`;
-                }
-                return `<span>${probFractionStr}</span> <span>(${pctStr})</span>`;
-            };
+            });
 
-            const playRarityAnimation = (rarity) => {
-                const achievementId = `view_animation_${rarity}`;
-                if (ACHIEVEMENTS.some(a => a.id === achievementId) && !playerData.achievements[achievementId]) {
-                    playerData.achievements[achievementId] = { timestamp: Date.now() };
-                }
+            const rollGoals = generateCleanGoals(1000000000000);
+            const discoveryGoals = generateCleanGoals(TOTAL_BLOCKS);
+            const starGoals = generateCleanGoals(TOTAL_STARS);
 
-                if (!playerData.settings.showAnimation) return;
+            rollGoals.forEach((goal, index) => tempAchievements.push({ id: `roll_${goal}`, name: `ローラーマスター ${index + 1}`, desc: `${goal.toLocaleString()}回ロールする。`, type: 'rolls', goal }));
+            discoveryGoals.forEach((goal, index) => tempAchievements.push({ id: `discover_${goal}`, name: `探求の旅人 ${index + 1}`, desc: `${goal.toLocaleString()}種類のブロックを発見する。`, type: 'discovery_count', goal }));
+            starGoals.forEach((goal, index) => tempAchievements.push({ id: `stars_${goal}`, name: `星の収集家 ${index + 1}`, desc: `${goal.toLocaleString()}個の星を集める。`, type: 'stars', goal }));
 
-                const rarityLower = rarity.toLowerCase().replace('コモン', 'common').replace('アンコモン', 'uncommon').replace('レア', 'rare').replace('エピック', 'epic').replace('レジェンダリー', 'legendary').replace('ミシカル', 'mythical').replace('ディバイン', 'divine').replace('セレスティアル', 'celestial').replace('トランセンデント', 'transcendent').replace('エルドリッチ', 'eldritch').replace('コズミック', 'cosmic');
-                const overlay = dom['rarity-animation-overlay'];
-                const content = overlay.querySelector('.rarity-animation-content');
-                
-                const animationClass = `animate-${rarityLower}`;
-                
-                content.textContent = `${rarity.toUpperCase()}!`;
-                overlay.className = animationClass;
-                overlay.classList.add('show');
-
-                const onAnimationEnd = () => {
-                    overlay.classList.remove('show', animationClass);
-                    overlay.removeEventListener('animationend', onAnimationEnd);
-                };
-                overlay.addEventListener('animationend', onAnimationEnd);
-            };
-
-            const updateStarDisplay = () => {
-                dom['star-count'].textContent = playerData.stats.stars.toLocaleString();
-                dom['star-total'].textContent = `/ ${TOTAL_STARS.toLocaleString()}`;
-                const percent = TOTAL_STARS > 0 ? (playerData.stats.stars / TOTAL_STARS * 100).toFixed(2) : "0.00";
-                dom['star-percent'].textContent = percent;
-            };
+            tempAchievements.sort((a,b) => (a.type.localeCompare(b.type)) || (a.goal || 0) - (a.goal || 0) || (a.rarity ? RARITY_ORDER.indexOf(a.rarity) : 0) - (b.rarity ? RARITY_ORDER.indexOf(b.rarity) : 0));
             
-            const saveData = () => localStorage.setItem('rngBlockGameData', JSON.stringify(playerData));
-            const loadData = () => {
-                const saved = localStorage.getItem('rngBlockGameData');
-                const defaults = { discoveredBlocks: {}, achievements: {}, settings: { showAnimation: true }, stats: { rolls: 0, highestLogProb: 0, stars: 0, startTime: Date.now() }, unlocks: { autoRoll: false, multiRoll: false }, cheats: { used: false } };
-                playerData = saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
-                if (!playerData.settings) playerData.settings = defaults.settings;
-                if (playerData.settings.showAnimation === undefined) playerData.settings.showAnimation = true;
-                if (!playerData.stats) playerData.stats = defaults.stats;
-                if (playerData.stats.stars === undefined) playerData.stats.stars = 0;
-                if (!playerData.stats.startTime) playerData.stats.startTime = Date.now();
-            };
-
-            const openModal = (modalId, content, updateCallback = null) => {
-                let modal = dom[modalId];
-                if (!modal) {
-                    modal = document.createElement('div');
-                    modal.id = modalId;
-                    modal.className = 'modal';
-                    document.body.appendChild(modal);
+            const uniqueAchievements = [];
+            const seenIds = new Set();
+            for (const ach of tempAchievements) {
+                if (!seenIds.has(ach.id)) {
+                    uniqueAchievements.push(ach);
+                    seenIds.add(ach.id);
                 }
-                modal.innerHTML = '';
-                modal.appendChild(content);
-                modal.style.display = 'block';
-                
-                activeModalUpdateCallback = updateCallback;
+            }
+            
+            if (uniqueAchievements.length > TOTAL_ACHIEVEMENTS) {
+                const keepIndices = new Set();
+                for(let i = 0; i < TOTAL_ACHIEVEMENTS; i++) {
+                    keepIndices.add(Math.floor(i * (uniqueAchievements.length / TOTAL_ACHIEVEMENTS)));
+                }
+                ACHIEVEMENTS = uniqueAchievements.filter((_, index) => keepIndices.has(index));
+            } else {
+                ACHIEVEMENTS = uniqueAchievements;
+            }
+        };
 
-                const closeBtn = modal.querySelector('.close-button');
-                const closeModalFunc = () => closeModal(modalId);
-                closeBtn.addEventListener('click', closeModalFunc);
-                modal.addEventListener('click', e => { if (e.target === modal) closeModalFunc(); });
+        const formatPlayTime = (ms) => {
+            if (ms <= 0) return '0秒 (0.000秒)';
+            const totalSeconds = ms / 1000;
+
+            let s = totalSeconds;
+            const years = Math.floor(s / 31536000); s %= 31536000;
+            const months = Math.floor(s / 2592000); s %= 2592000;
+            const days = Math.floor(s / 86400); s %= 86400;
+            const hours = Math.floor(s / 3600); s %= 3600;
+            const minutes = Math.floor(s / 60);
+            const seconds = Math.floor(s % 60);
+
+            const parts = [];
+            if (years > 0) parts.push(`${years}年`);
+            if (months > 0) parts.push(`${months}ヶ月`);
+            if (days > 0) parts.push(`${days}日`);
+            if (hours > 0) parts.push(`${hours}時間`);
+            if (minutes > 0) parts.push(`${minutes}分`);
+            if (seconds > 0 || parts.length === 0) parts.push(`${seconds}秒`);
+            
+            const timeString = parts.join('');
+
+            let parenthetical;
+            if (totalSeconds >= 31536000) {
+                parenthetical = `(${(totalSeconds / 31536000).toFixed(3)}年)`;
+            } else if (totalSeconds >= 2592000) {
+                parenthetical = `(${(totalSeconds / 2592000).toFixed(3)}ヶ月)`;
+            } else if (totalSeconds >= 86400) {
+                parenthetical = `(${(totalSeconds / 86400).toFixed(3)}日)`;
+            } else if (totalSeconds >= 3600) {
+                parenthetical = `(${(totalSeconds / 3600).toFixed(3)}時間)`;
+            } else if (totalSeconds >= 60) {
+                parenthetical = `(${(totalSeconds / 60).toFixed(3)}分)`;
+            } else {
+                parenthetical = `(${(totalSeconds).toFixed(3)}秒)`;
+            }
+            return `${timeString} ${parenthetical}`;
+        };
+
+        const UNLOCK_THRESHOLDS = { autoRoll: 2, multiRoll: 4 };
+        const dom = new Proxy({}, { get: (_, id) => document.getElementById(id) });
+        let playerData, isRolling = false, autoRollInterval = null, collectionCurrentPage = 1, achievementsCurrentPage = 1;
+        let activeModalUpdateCallback = null;
+        
+        const formatProb = (logProb) => {
+            if (logProb <= 0) return "---";
+            if (logProb === 1e10) {
+                return `<span>1 / 10^10^10</span>`;
+            }
+            const useExponentThreshold = 6;
+            let probFractionStr;
+            if (logProb >= useExponentThreshold) {
+                probFractionStr = `1 / 10^${logProb.toLocaleString('ja-JP', { maximumFractionDigits: 0 })}`;
+            } else {
+                const n = Math.pow(10, logProb);
+                probFractionStr = `1 / ${n.toLocaleString('ja-JP', { maximumFractionDigits: 0 })}`;
+            }
+            let pctStr;
+            const pct = Math.pow(10, 2 - logProb);
+            const pctExponentThreshold = 1e-10;
+            if (pct < pctExponentThreshold && logProb > 2) {
+                const pctLog = 2 - logProb;
+                const exponent = Math.floor(pctLog);
+                const mantissa = Math.pow(10, pctLog - exponent);
+                pctStr = `${mantissa.toFixed(2)} × 10^${exponent}%`;
+            } else {
+                pctStr = `${pct.toLocaleString('ja-JP', { maximumSignificantDigits: 4 })}%`;
+            }
+            return `<span>${probFractionStr}</span> <span>(${pctStr})</span>`;
+        };
+
+        const playRarityAnimation = (rarity) => {
+            const achievementId = `view_animation_${rarity}`;
+            if (ACHIEVEMENTS.some(a => a.id === achievementId) && !playerData.achievements[achievementId]) {
+                playerData.achievements[achievementId] = { timestamp: Date.now() };
+            }
+
+            if (!playerData.settings.showAnimation) return;
+
+            const rarityLower = rarity.toLowerCase().replace('コモン', 'common').replace('アンコモン', 'uncommon').replace('レア', 'rare').replace('エピック', 'epic').replace('レジェンダリー', 'legendary').replace('ミシカル', 'mythical').replace('ディバイン', 'divine').replace('セレスティアル', 'celestial').replace('トランセンデント', 'transcendent').replace('エルドリッチ', 'eldritch').replace('コズミック', 'cosmic');
+            const overlay = dom['rarity-animation-overlay'];
+            const content = overlay.querySelector('.rarity-animation-content');
+            
+            const animationClass = `animate-${rarityLower}`;
+            
+            content.textContent = `${rarity.toUpperCase()}!`;
+            overlay.className = animationClass;
+            overlay.classList.add('show');
+
+            const onAnimationEnd = () => {
+                overlay.classList.remove('show', animationClass);
+                overlay.removeEventListener('animationend', onAnimationEnd);
             };
-            const closeModal = (modalId) => { 
-                if (dom[modalId]) dom[modalId].style.display = 'none'; 
-                activeModalUpdateCallback = null;
-            };
+            overlay.addEventListener('animationend', onAnimationEnd);
+        };
 
-            const showLoader = () => {
-                const container = dom['loader-container'];
-                container.style.display = 'flex';
-                let startTime = Date.now();
-                const update = (processed, total) => {
-                    const progress = total > 0 ? (processed / total) * 100 : 0;
-                    dom['progress-bar-fill'].style.width = `${progress}%`;
-                    dom['loader-percent'].textContent = `${Math.floor(progress)}%`;
-                    const elapsed = (Date.now() - startTime) / 1000;
-                    if (processed > 1000 && elapsed > 0.5) {
-                        const rollsPerSecond = processed / elapsed;
-                        const remainingRolls = total - processed;
-                        const remaining = Math.round(remainingRolls / rollsPerSecond);
-                        dom['loader-time'].textContent = `(残り: ${remaining}秒)`;
-                    } else {
-                        dom['loader-time'].textContent = `(計算中...)`;
-                    }
-                };
-                return { update };
-            };
-            const hideLoader = () => { dom['loader-container'].style.display = 'none'; };
+        const updateStarDisplay = () => {
+            dom['star-count'].textContent = playerData.stats.stars.toLocaleString();
+            dom['star-total'].textContent = `/ ${TOTAL_STARS.toLocaleString()}`;
+            const percent = TOTAL_STARS > 0 ? (playerData.stats.stars / TOTAL_STARS * 100).toFixed(2) : "0.00";
+            dom['star-percent'].textContent = percent;
+        };
+        
+        const saveData = () => localStorage.setItem('rngBlockGameData', JSON.stringify(playerData));
+        const loadData = () => {
+            const saved = localStorage.getItem('rngBlockGameData');
+            const defaults = { discoveredBlocks: {}, achievements: {}, settings: { showAnimation: true }, stats: { rolls: 0, highestLogProb: 0, stars: 0, startTime: Date.now() }, unlocks: { autoRoll: false, multiRoll: false }, cheats: { used: false } };
+            playerData = saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
+            if (!playerData.settings) playerData.settings = defaults.settings;
+            if (playerData.settings.showAnimation === undefined) playerData.settings.showAnimation = true;
+            if (!playerData.stats) playerData.stats = defaults.stats;
+            if (playerData.stats.stars === undefined) playerData.stats.stars = 0;
+            if (!playerData.stats.startTime) playerData.stats.startTime = Date.now();
+        };
 
-            const doRoll = async () => {
-                if (isRolling) return;
-                isRolling = true;
-                dom['roll-button'].disabled = true;
+        const openModal = (modalId, content, updateCallback = null) => {
+            let modal = dom[modalId];
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = modalId;
+                modal.className = 'modal';
+                document.body.appendChild(modal);
+            }
+            modal.innerHTML = '';
+            modal.appendChild(content);
+            modal.style.display = 'block';
+            
+            activeModalUpdateCallback = updateCallback;
 
-                const slider = dom['multi-roll-slider'];
-                const multiRollCount = slider ? Math.pow(2, parseInt(slider.value)) : 1;
-                let foundBlocksInRoll = [], bestBlock = null, loader, starsGained = 0;
-                
-                if (multiRollCount > 5000) {
-                    loader = showLoader();
-                    const chunkSize = 20000;
-                    let processedCount = 0;
-                    const processChunk = async () => {
-                        for (let i = 0; i < chunkSize && processedCount < multiRollCount; i++) {
-                            playerData.stats.rolls++;
-                            const luck = -Math.log10(Math.random());
-                            let rolledBlock = BLOCKS[BLOCKS.length - 1];
-                            for (const block of BLOCKS) { if (luck >= block.logProb) { rolledBlock = block; break; } }
-                            foundBlocksInRoll.push(rolledBlock);
-                            processedCount++;
-                        }
-                        loader.update(processedCount, multiRollCount);
-                        if (processedCount < multiRollCount) {
-                            await new Promise(resolve => setTimeout(resolve, 0));
-                            await processChunk();
-                        }
-                    };
-                    await processChunk();
-                    hideLoader();
+            const closeBtn = modal.querySelector('.close-button');
+            const closeModalFunc = () => closeModal(modalId);
+            closeBtn.addEventListener('click', closeModalFunc);
+            modal.addEventListener('click', e => { if (e.target === modal) closeModalFunc(); });
+        };
+        const closeModal = (modalId) => { 
+            if (dom[modalId]) dom[modalId].style.display = 'none'; 
+            activeModalUpdateCallback = null;
+        };
+
+        const showLoader = () => {
+            const container = dom['loader-container'];
+            container.style.display = 'flex';
+            let startTime = Date.now();
+            const update = (processed, total) => {
+                const progress = total > 0 ? (processed / total) * 100 : 0;
+                dom['progress-bar-fill'].style.width = `${progress}%`;
+                dom['loader-percent'].textContent = `${Math.floor(progress)}%`;
+                const elapsed = (Date.now() - startTime) / 1000;
+                if (processed > 1000 && elapsed > 0.5) {
+                    const rollsPerSecond = processed / elapsed;
+                    const remainingRolls = total - processed;
+                    const remaining = Math.round(remainingRolls / rollsPerSecond);
+                    dom['loader-time'].textContent = `(残り: ${remaining}秒)`;
                 } else {
-                    for (let i = 0; i < multiRollCount; i++) {
-                        playerData.stats.rolls++; const luck = -Math.log10(Math.random()); let rolledBlock = BLOCKS[BLOCKS.length - 1];
+                    dom['loader-time'].textContent = `(計算中...)`;
+                }
+            };
+            return { update };
+        };
+        const hideLoader = () => { dom['loader-container'].style.display = 'none'; };
+
+        const doRoll = async () => {
+            if (isRolling) return;
+            isRolling = true;
+            dom['roll-button'].disabled = true;
+
+            const slider = dom['multi-roll-slider'];
+            const multiRollCount = slider ? Math.pow(2, parseInt(slider.value)) : 1;
+            let foundBlocksInRoll = [], bestBlock = null, loader, starsGained = 0;
+            
+            if (multiRollCount > 5000) {
+                loader = showLoader();
+                const chunkSize = 20000;
+                let processedCount = 0;
+                const processChunk = async () => {
+                    for (let i = 0; i < chunkSize && processedCount < multiRollCount; i++) {
+                        playerData.stats.rolls++;
+                        const luck = -Math.log10(Math.random());
+                        let rolledBlock = BLOCKS[BLOCKS.length - 1];
                         for (const block of BLOCKS) { if (luck >= block.logProb) { rolledBlock = block; break; } }
                         foundBlocksInRoll.push(rolledBlock);
+                        processedCount++;
                     }
-                }
-                
-                bestBlock = foundBlocksInRoll.reduce((best, current) => (!best || current.logProb > best.logProb) ? current : best, null);
-                const newDiscoveries = new Set();
-                foundBlocksInRoll.forEach(block => { if (!playerData.discoveredBlocks[block.id]) newDiscoveries.add(block); });
-                
-                if (newDiscoveries.size > 0) {
-                    const timestamp = Date.now();
-                    newDiscoveries.forEach(block => {
-                        playerData.discoveredBlocks[block.id] = { timestamp };
-                        starsGained += getStarsForBlock(block);
-                    });
-                    playerData.stats.stars += starsGained;
-                    updateStarDisplay();
-                }
-
-                if (bestBlock && RARITY_ORDER.indexOf(bestBlock.rarity) >= RARITY_ORDER.indexOf('エピック')) {
-                    playRarityAnimation(bestBlock.rarity);
-                }
-
-                if (bestBlock.logProb > playerData.stats.highestLogProb) playerData.stats.highestLogProb = bestBlock.logProb;
-
-                checkUnlocksAndAchievements(newDiscoveries);
-                saveData();
-                displayResult(bestBlock, multiRollCount, newDiscoveries.size, starsGained);
-                isRolling = false;
-                dom['roll-button'].disabled = autoRollInterval !== null;
-            };
-
-            const displayResult = (block, count, newDiscoveriesCount, starsGained) => {
-                let newDiscoveryHTML = '';
-                if (newDiscoveriesCount > 0) {
-                    newDiscoveryHTML += `<p style="font-size:0.9rem; color: var(--success-color);">${newDiscoveriesCount}個の新しいブロックを発見！</p>`;
-                }
-                if (starsGained > 0) {
-                     newDiscoveryHTML += `<p style="font-size:0.9rem; color: var(--star-color);">+${starsGained.toLocaleString()} 星獲得！</p>`;
-                }
-                const resultBlock = dom['result-block'];
-                resultBlock.innerHTML = `<p style="font-size:1rem; opacity: 0.8;">(x${count.toLocaleString()}回ロール)</p>${newDiscoveryHTML}<p class="block-card-name" style="font-size:1.5rem;">最もレア: ${block.name}</p><p class="block-card-rarity" style="background: ${RARITY_DATA[block.rarity].color}">${block.rarity}</p><div class="block-card-prob">${formatProb(block.logProb)}</div>`;
-                resultBlock.classList.add('found');
-            };
-
-            const updateUnlocksUI = () => {
-                dom['unlock-features-container'].innerHTML = '';
-                if (Object.values(playerData.unlocks).some(u => u) || playerData.cheats.used) {
-                    const maxPower = playerData.cheats.superMultiRoll ? 20 : 7; // 2^7=128, 2^20≈1M
-                    const el = document.createElement('div');
-                    el.className = 'unlock-features';
-                    el.innerHTML = `<div class="unlock-feature"><span>オートロール</span>${playerData.unlocks.autoRoll ? `<label class="switch"><input type="checkbox" id="auto-roll-toggle"><span class="slider"></span></label>`: '<span>ロック中</span>'}</div><div class="unlock-feature"><span>複数回ロール</span>${playerData.unlocks.multiRoll ? `<div style="display:flex; align-items:center; gap: 10px;">x<span id="multi-roll-value">1</span><input type="range" id="multi-roll-slider" min="0" max="${maxPower}" value="0" step="1"></div>`: '<span>ロック中</span>'}</div>`;
-                    dom['unlock-features-container'].appendChild(el);
-                    
-                    if (playerData.unlocks.autoRoll) {
-                        dom['auto-roll-toggle'].addEventListener('change', toggleAutoRoll);
+                    loader.update(processedCount, multiRollCount);
+                    if (processedCount < multiRollCount) {
+                        await new Promise(resolve => setTimeout(resolve, 0));
+                        await processChunk();
                     }
-                    if (playerData.unlocks.multiRoll) {
-                        const slider = dom['multi-roll-slider'];
-                        const valueDisplay = dom['multi-roll-value'];
-                        slider.addEventListener('input', (e) => {
-                            const rollAmount = Math.pow(2, parseInt(e.target.value));
-                            valueDisplay.textContent = rollAmount.toLocaleString('ja-JP');
-                        });
-                    }
+                };
+                await processChunk();
+                hideLoader();
+            } else {
+                for (let i = 0; i < multiRollCount; i++) {
+                    playerData.stats.rolls++; const luck = -Math.log10(Math.random()); let rolledBlock = BLOCKS[BLOCKS.length - 1];
+                    for (const block of BLOCKS) { if (luck >= block.logProb) { rolledBlock = block; break; } }
+                    foundBlocksInRoll.push(rolledBlock);
                 }
-            };
-            const checkUnlocksAndAchievements = (newlyDiscoveredBlocks) => {
-                let updated = false;
-                const highestNewLogProb = Math.max(0, ...Array.from(newlyDiscoveredBlocks).map(b => b.logProb));
-                
-                if (!playerData.unlocks.autoRoll && highestNewLogProb >= UNLOCK_THRESHOLDS.autoRoll) { playerData.unlocks.autoRoll = true; updated = true; }
-                if (!playerData.unlocks.multiRoll && highestNewLogProb >= UNLOCK_THRESHOLDS.multiRoll) { playerData.unlocks.multiRoll = true; updated = true; }
-                if(updated) updateUnlocksUI();
-
-                const discoveredRarities = new Set(Array.from(newlyDiscoveredBlocks).map(b => b.rarity));
-
-                ACHIEVEMENTS.forEach(ach => {
-                    if(playerData.achievements[ach.id]) return;
-                    let achieved = false;
-                    if (ach.type === 'rolls' && playerData.stats.rolls >= ach.goal) achieved = true;
-                    if (ach.type === 'discovery_rarity' && discoveredRarities.has(ach.rarity)) achieved = true;
-                    if (ach.type === 'discovery_count' && Object.keys(playerData.discoveredBlocks).length >= ach.goal) achieved = true;
-                    if (ach.type === 'stars' && playerData.stats.stars >= ach.goal) achieved = true;
-                    if (achieved) playerData.achievements[ach.id] = { timestamp: Date.now() };
-                });
-            };
-            const toggleAutoRoll = (event) => {
-                if(event.target.checked) {
-                    dom['roll-button'].disabled = true;
-                    autoRollInterval = setInterval(doRoll, 50);
-                } else {
-                    clearInterval(autoRollInterval);
-                    autoRollInterval = null;
-                    dom['roll-button'].disabled = false;
-                }
-            };
+            }
             
-            dom['roll-button'].addEventListener('click', doRoll);
-            dom['settings-button'].addEventListener('click', () => {
-                const content = dom['settings-modal-template'].content.cloneNode(true);
-                openModal('settings-modal', content, null);
-                
-                const modal = dom['settings-modal'];
-                const animationToggle = modal.querySelector('#animation-toggle');
-                animationToggle.checked = playerData.settings.showAnimation;
-                animationToggle.addEventListener('change', (e) => {
-                    playerData.settings.showAnimation = e.target.checked;
-                    saveData();
-                });
-
-                modal.querySelector('#show-cheat-btn').addEventListener('click', (e) => { e.target.style.display = 'none'; modal.querySelector('#cheat-content').style.display = 'block'; });
-                const activateCheat = () => { playerData.cheats.used = true; saveData(); };
-                modal.querySelector('#cheat-unlock-features').addEventListener('click', () => { activateCheat(); Object.keys(playerData.unlocks).forEach(k => playerData.unlocks[k] = true); updateUnlocksUI(); alert("全ての機能がアンロックされました。"); });
-                modal.querySelector('#cheat-unlock-blocks').addEventListener('click', () => { 
-                    if(confirm("本当に全てのブロックを入手しますか？ (星も加算されます)")){ 
-                        activateCheat(); 
-                        const ts = Date.now();
-                        let starsToAdd = 0;
-                        BLOCKS.forEach(b => { 
-                            if(!playerData.discoveredBlocks[b.id]) {
-                                playerData.discoveredBlocks[b.id] = {timestamp: ts};
-                                starsToAdd += getStarsForBlock(b);
-                            }
-                        });
-                        playerData.stats.stars += starsToAdd;
-                        playerData.stats.stars = Math.min(playerData.stats.stars, TOTAL_STARS);
-                        updateStarDisplay();
-                        alert(`全てのブロックを入手し、${starsToAdd.toLocaleString()}個の星を獲得しました。`); 
-                    }
-                });
-                modal.querySelector('#cheat-unlock-achievements').addEventListener('click', () => { if(confirm("本当に全ての実績をアンロックしますか？")){ activateCheat(); playerData.achievements = ACHIEVEMENTS.reduce((acc, ach) => ({...acc, [ach.id]: {timestamp:Date.now()}}), {}); alert("全ての実績をアンロックしました。"); }});
-                modal.querySelector('#cheat-super-multi-roll').addEventListener('click', () => { activateCheat(); playerData.cheats.superMultiRoll = true; if(!playerData.unlocks.multiRoll){playerData.unlocks.multiRoll = true;} updateUnlocksUI(); alert("複数回ロールの上限が約100万回に解放されました。"); });
-                modal.querySelector('#cheat-set-stars').addEventListener('click', () => {
-                    activateCheat();
-                    const input = prompt("新しい星の値を入力してください:", playerData.stats.stars);
-                    if (input === null) return;
-                    const newValue = parseInt(input, 10);
-                    if (!isNaN(newValue) && newValue >= 0) {
-                        playerData.stats.stars = Math.min(newValue, TOTAL_STARS);
-                        saveData();
-                        updateStarDisplay();
-                        alert(`星が ${playerData.stats.stars.toLocaleString()} に設定されました。`);
-                    } else {
-                        alert("無効な値です。0以上の数値を入力してください。");
-                    }
-                });
-                modal.querySelector('#reset-data-btn').addEventListener('click', () => { if (confirm('本当に全てのデータをリセットしますか？この操作は取り消せません。ページがリロードされます。')) { localStorage.removeItem('rngBlockGameData'); location.reload(); }});
-            });
+            bestBlock = foundBlocksInRoll.reduce((best, current) => (!best || current.logProb > best.logProb) ? current : best, null);
+            const newDiscoveries = new Set();
+            foundBlocksInRoll.forEach(block => { if (!playerData.discoveredBlocks[block.id]) newDiscoveries.add(block); });
             
-            dom['collection-button'].addEventListener('click', () => {
-                collectionCurrentPage = 1;
-                const content = dom['collection-modal-template'].content.cloneNode(true);
-                const modalId = 'collection-modal';
-                
-                const rarityFilter = content.querySelector('#rarity-filter');
-                RARITY_ORDER.forEach(r => rarityFilter.add(new Option(r, r)));
-                
-                const updateFunc = () => {
-                    const modal = dom[modalId];
-                    if (!modal || modal.style.display === 'none') return;
-
-                    const discoveredCount = Object.keys(playerData.discoveredBlocks).length;
-                    modal.querySelector('#collection-progress').textContent = `発見済み: ${discoveredCount} / ${TOTAL_BLOCKS} (${(discoveredCount / TOTAL_BLOCKS * 100).toFixed(2)}%)`;
-                    
-                    const searchTerm = modal.querySelector('#search-input').value.toLowerCase();
-                    const rarity = modal.querySelector('#rarity-filter').value;
-                    const discoveredFilter = modal.querySelector('#discovered-filter').value;
-                    const [sortKey, sortDir] = modal.querySelector('#sort-order').value.split('-');
-                    let filtered = [...BLOCKS].filter(b => {
-                        const isDiscovered = !!playerData.discoveredBlocks[b.id];
-                        if (discoveredFilter === 'discovered' && !isDiscovered) return false;
-                        if (discoveredFilter === 'undiscovered' && isDiscovered) return false;
-                        if (rarity !== 'all' && b.rarity !== rarity) return false;
-                        if (searchTerm && !b.name.toLowerCase().includes(searchTerm)) return false;
-                        return true;
-                    });
-                    filtered.sort((a, b) => {
-                        let valA, valB;
-                        if (sortKey === 'timestamp') {
-                            valA = playerData.discoveredBlocks[a.id]?.timestamp || 0;
-                            valB = playerData.discoveredBlocks[b.id]?.timestamp || 0;
-                        } else { valA = a[sortKey]; valB = b[sortKey]; }
-                        if (typeof valA === 'string') return sortDir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
-                        return sortDir === 'asc' ? valA - valB : valB - valA;
-                    });
-                    const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
-                    collectionCurrentPage = Math.min(collectionCurrentPage, totalPages);
-                    const startIndex = (collectionCurrentPage - 1) * ITEMS_PER_PAGE;
-                    const itemsToShow = filtered.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-                    const grid = modal.querySelector('#collection-grid');
-                    grid.innerHTML = itemsToShow.map(b => `<div class="block-card ${!!playerData.discoveredBlocks[b.id] ? '' : 'not-discovered'}" data-block-id="${b.id}">${!!playerData.discoveredBlocks[b.id] ? `<div class="block-card-name">${b.name}</div>` : `<div style="opacity:0.5; font-size: 1.5rem;">?</div>`}</div>`).join('');
-                    
-                    modal.querySelector('#collection-page-info').textContent = `ページ ${collectionCurrentPage} / ${totalPages}`;
-                    modal.querySelector('#collection-prev').disabled = collectionCurrentPage === 1;
-                    modal.querySelector('#collection-next').disabled = collectionCurrentPage === totalPages;
-                };
-
-                openModal(modalId, content, updateFunc);
-                updateFunc();
-
-                const modal = dom[modalId];
-                ['#search-input', '#rarity-filter', '#sort-order', '#discovered-filter'].forEach(id => modal.querySelector(id).addEventListener('input', () => {collectionCurrentPage=1; updateFunc();}));
-                modal.querySelector('#collection-prev').addEventListener('click', () => { if(collectionCurrentPage > 1) { collectionCurrentPage--; updateFunc(); }});
-                modal.querySelector('#collection-next').addEventListener('click', () => { if (!modal.querySelector('#collection-next').disabled) { collectionCurrentPage++; updateFunc(); }});
-                modal.querySelector('#collection-grid').addEventListener('click', (e) => {
-                    const card = e.target.closest('.block-card:not(.not-discovered)');
-                    if (card) {
-                        const blockId = parseInt(card.dataset.blockId, 10);
-                        showBlockDetails(blockId);
-                    }
+            if (newDiscoveries.size > 0) {
+                const timestamp = Date.now();
+                newDiscoveries.forEach(block => {
+                    playerData.discoveredBlocks[block.id] = { timestamp };
+                    starsGained += getStarsForBlock(block);
                 });
-            });
-
-            dom['achievements-button'].addEventListener('click', () => {
-                achievementsCurrentPage = 1;
-                const content = dom['achievements-modal-template'].content.cloneNode(true);
-                const modalId = 'achievements-modal';
-                let isFirstRender = true;
-
-                const updateFunc = () => {
-                    const modal = dom[modalId];
-                    if (!modal || modal.style.display === 'none') return;
-
-                    const unlockedCount = Object.keys(playerData.achievements).length;
-                    modal.querySelector('#achievement-progress').textContent = `達成済み: ${unlockedCount} / ${ACHIEVEMENTS.length} (${(unlockedCount / ACHIEVEMENTS.length * 100).toFixed(2)}%)`;
-                    const totalPages = Math.max(1, Math.ceil(ACHIEVEMENTS.length / ITEMS_PER_PAGE));
-                    achievementsCurrentPage = Math.min(achievementsCurrentPage, totalPages);
-                    
-                    const startIndex = (achievementsCurrentPage - 1) * ITEMS_PER_PAGE;
-                    const itemsToShow = ACHIEVEMENTS.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-                    
-                    const list = modal.querySelector('#achievement-list');
-                    
-                    if (isFirstRender) {
-                        list.innerHTML = itemsToShow.map(ach => {
-                            const unlocked = playerData.achievements[ach.id]; let progress = 0, goal = 1, showProgress = false;
-                            if (ach.type === 'rolls') { progress = Math.min(playerData.stats.rolls, ach.goal); goal = ach.goal; showProgress = true; }
-                            else if (ach.type === 'discovery_count') { progress = Math.min(Object.keys(playerData.discoveredBlocks).length, ach.goal); goal = ach.goal; showProgress = true; }
-                             else if (ach.type === 'stars') { progress = Math.min(playerData.stats.stars, ach.goal); goal = ach.goal; showProgress = true; }
-                            const progressPercent = unlocked ? 100 : (progress / goal) * 100;
-                            return `<div class="achievement-item ${unlocked ? 'unlocked' : ''}" data-achievement-id="${ach.id}" style="animation: fadeIn 0.5s ease;"><div class="achievement-header"><span class="achievement-name">${ach.name}</span><span>${unlocked ? '達成済み' : ''}</span></div><p class="achievement-desc">${ach.desc}</p>${showProgress ? `<div class="progress-bar"><div class="progress-bar-inner" style="width: ${progressPercent}%"></div></div><p style="text-align: right; font-size: 0.8rem;">${progress.toLocaleString()} / ${goal.toLocaleString()} (${progressPercent.toFixed(1)}%)</p>` : ''}</div>`;
-                        }).join('');
-                        isFirstRender = false;
-                    } else {
-                        list.querySelectorAll('.achievement-item').forEach((el, index) => {
-                            const ach = itemsToShow[index];
-                            if (!ach) return;
-                            const unlocked = playerData.achievements[ach.id];
-                            el.classList.toggle('unlocked', !!unlocked);
-                            el.querySelector('.achievement-header span:last-child').textContent = unlocked ? '達成済み' : '';
-                            
-                            if (ach.type === 'rolls' || ach.type === 'discovery_count' || ach.type === 'stars') {
-                                let progress = 0;
-                                if (ach.type === 'rolls') progress = Math.min(playerData.stats.rolls, ach.goal);
-                                else if (ach.type === 'discovery_count') progress = Math.min(Object.keys(playerData.discoveredBlocks).length, ach.goal);
-                                else if (ach.type === 'stars') progress = Math.min(playerData.stats.stars, ach.goal);
-                                
-                                const progressPercent = unlocked ? 100 : (progress / ach.goal) * 100;
-                                el.querySelector('.progress-bar-inner').style.width = `${progressPercent}%`;
-                                el.querySelector('p[style*="text-align: right"]').textContent = `${progress.toLocaleString()} / ${ach.goal.toLocaleString()} (${progressPercent.toFixed(1)}%)`;
-                            }
-                        });
-                    }
-
-                    modal.querySelector('#achievement-page-info').textContent = `ページ ${achievementsCurrentPage} / ${totalPages}`;
-                    modal.querySelector('#achievement-prev').disabled = achievementsCurrentPage === 1;
-                    modal.querySelector('#achievement-next').disabled = achievementsCurrentPage === totalPages;
-                };
-
-                openModal(modalId, content, updateFunc);
-                updateFunc();
-
-                const modal = dom[modalId];
-                modal.querySelector('#achievement-prev').addEventListener('click', () => { if(achievementsCurrentPage > 1) { achievementsCurrentPage--; isFirstRender = true; updateFunc(); }});
-                modal.querySelector('#achievement-next').addEventListener('click', () => { if(!modal.querySelector('#achievement-next').disabled) { achievementsCurrentPage++; isFirstRender = true; updateFunc(); }});
-            });
-
-            dom['stats-button'].addEventListener('click', () => {
-                const content = dom['stats-modal-template'].content.cloneNode(true);
-                const modalId = 'stats-modal';
-                
-                const updateFunc = () => {
-                    const modal = dom[modalId];
-                    if (!modal || modal.style.display === 'none') return;
-
-                    const discoveredCount = Object.keys(playerData.discoveredBlocks).length;
-                    const achievementsCount = Object.keys(playerData.achievements).length;
-                    const rarestBlock = BLOCKS.find(b => b.logProb === playerData.stats.highestLogProb);
-                    const starsPercent = TOTAL_STARS > 0 ? (playerData.stats.stars / TOTAL_STARS * 100).toFixed(2) : "0.00";
-                    const playTime = formatPlayTime(Date.now() - playerData.stats.startTime);
-                    
-                    modal.querySelector('#stats-info').innerHTML = `
-                        <div class="info-row"><span>プレイ時間:</span><span>${playTime}</span></div>
-                        <div class="info-row"><span>総ロール回数:</span><span>${playerData.stats.rolls.toLocaleString()} 回</span></div>
-                        <div class="info-row"><span>獲得した星:</span><span>${playerData.stats.stars.toLocaleString()} / ${TOTAL_STARS.toLocaleString()} (${starsPercent}%)</span></div>
-                        <div class="info-row"><span>発見したブロック:</span><span>${discoveredCount.toLocaleString()} / ${TOTAL_BLOCKS.toLocaleString()} 種類 (${(discoveredCount / TOTAL_BLOCKS * 100).toFixed(2)}%)</span></div>
-                        <div class="info-row"><span>達成した実績:</span><span>${achievementsCount.toLocaleString()} / ${ACHIEVEMENTS.length.toLocaleString()} 個 (${(achievementsCount / ACHIEVEMENTS.length * 100).toFixed(2)}%)</span></div>
-                        <div class="info-row"><span>最もレアな発見:</span><span>${rarestBlock ? rarestBlock.name : 'なし'}</span></div>
-                    `;
-                };
-
-                openModal(modalId, content, updateFunc);
-                updateFunc();
-            });
-
-            dom['help-button'].addEventListener('click', () => {
-                const content = dom['help-modal-template'].content.cloneNode(true);
-                openModal('help-modal', content, null);
-            });
-            dom['rarity-info-button'].addEventListener('click', () => {
-                const content = dom['rarity-info-modal-template'].content.cloneNode(true);
-                let tableHTML = `<table id="rarity-info-table"><tr><th>レア度</th><th>確率の目安 (これ以上)</th></tr>`;
-                RARITY_ORDER.forEach(rarity => {
-                    const data = RARITY_DATA[rarity];
-                    const prob = formatProb(data.threshold);
-                    tableHTML += `<tr>
-                        <td><span class="rarity-color-swatch" style="background:${data.color}"></span>${rarity}</td>
-                        <td>${prob}</td>
-                    </tr>`;
-                });
-                tableHTML += `</table>`;
-                content.querySelector('#rarity-info-body').innerHTML = tableHTML;
-                openModal('rarity-info-modal', content, null);
-            });
-
-            const showBlockDetails = (blockId) => {
-                const block = BLOCKS.find(b => b.id === blockId);
-                const discoveryInfo = playerData.discoveredBlocks[blockId];
-                if (!block || !discoveryInfo) return;
-                
-                const content = dom['detail-modal-template'].content.cloneNode(true);
-                const cardContainer = content.querySelector('#detail-card-container');
-                cardContainer.innerHTML = `<div class="block-card"><div class="block-card-name">${block.name}</div><div class="block-card-rarity" style="background: ${RARITY_DATA[block.rarity].color}">${block.rarity}</div><div class="block-card-prob">${formatProb(block.logProb)}</div></div>`;
-                
-                const date = new Date(discoveryInfo.timestamp).toLocaleString('ja-JP');
-                const stars = getStarsForBlock(block);
-                content.querySelector('#detail-info').innerHTML = `
-                    <div class="info-row"><span>初回入手時の星:</span><span style="color: var(--star-color); font-weight: bold;">+${stars.toLocaleString()}</span></div>
-                    <div class="info-row"><span>初入手時刻:</span><span>${date}</span></div>
-                    <div class="info-row"><span>チート使用:</span><span>${playerData.cheats.used ? 'はい' : 'いいえ'}</span></div>
-                `;
-
-                const actionsContainer = content.querySelector('#detail-actions');
-                actionsContainer.innerHTML = '';
-                if (RARITY_ORDER.indexOf(block.rarity) >= RARITY_ORDER.indexOf('エピック')) {
-                    const replayButton = document.createElement('button');
-                    replayButton.textContent = '演出を再生';
-                    replayButton.className = 'btn';
-                    replayButton.addEventListener('click', () => {
-                        playRarityAnimation(block.rarity);
-                    });
-                    actionsContainer.appendChild(replayButton);
-                }
-                openModal('detail-modal', content, null);
-            };
-
-            const initialize = () => {
-                createBlocks();
-                createAchievements();
-                loadData();
-                updateUnlocksUI();
+                playerData.stats.stars += starsGained;
                 updateStarDisplay();
-                dom['result-block'].innerHTML = '<p>「回す」ボタンを押して始めよう！</p>';
-                dom['result-block'].classList.add('found');
+            }
 
-                setInterval(() => {
-                    if (activeModalUpdateCallback) {
-                        activeModalUpdateCallback();
-                    }
-                }, 1);
-            };
-            initialize();
+            if (bestBlock && RARITY_ORDER.indexOf(bestBlock.rarity) >= RARITY_ORDER.indexOf('エピック')) {
+                playRarityAnimation(bestBlock.rarity);
+            }
+
+            if (bestBlock.logProb > playerData.stats.highestLogProb) playerData.stats.highestLogProb = bestBlock.logProb;
+
+            checkUnlocksAndAchievements(newDiscoveries);
+            saveData();
+            displayResult(bestBlock, multiRollCount, newDiscoveries.size, starsGained);
+            isRolling = false;
+            dom['roll-button'].disabled = autoRollInterval !== null;
+        };
+
+        const displayResult = (block, count, newDiscoveriesCount, starsGained) => {
+            let newDiscoveryHTML = '';
+            if (newDiscoveriesCount > 0) {
+                newDiscoveryHTML += `<p style="font-size:0.9rem; color: var(--success-color);">${newDiscoveriesCount}個の新しいブロックを発見！</p>`;
+            }
+            if (starsGained > 0) {
+                 newDiscoveryHTML += `<p style="font-size:0.9rem; color: var(--star-color);">+${starsGained.toLocaleString()} 星獲得！</p>`;
+            }
+            const resultBlock = dom['result-block'];
+            resultBlock.innerHTML = `<p style="font-size:1rem; opacity: 0.8;">(x${count.toLocaleString()}回ロール)</p>${newDiscoveryHTML}<p class="block-card-name" style="font-size:1.5rem;">最もレア: ${block.name}</p><p class="block-card-rarity" style="background: ${RARITY_DATA[block.rarity].color}">${block.rarity}</p><div class="block-card-prob">${formatProb(block.logProb)}</div>`;
+            resultBlock.classList.add('found');
+        };
+
+        const updateUnlocksUI = () => {
+            dom['unlock-features-container'].innerHTML = '';
+            if (Object.values(playerData.unlocks).some(u => u) || playerData.cheats.used) {
+                const maxPower = playerData.cheats.superMultiRoll ? 20 : 7; // 2^7=128, 2^20≈1M
+                const el = document.createElement('div');
+                el.className = 'unlock-features';
+                el.innerHTML = `<div class="unlock-feature"><span>オートロール</span>${playerData.unlocks.autoRoll ? `<label class="switch"><input type="checkbox" id="auto-roll-toggle"><span class="slider"></span></label>`: '<span>ロック中</span>'}</div><div class="unlock-feature"><span>複数回ロール</span>${playerData.unlocks.multiRoll ? `<div style="display:flex; align-items:center; gap: 10px;">x<span id="multi-roll-value">1</span><input type="range" id="multi-roll-slider" min="0" max="${maxPower}" value="0" step="1"></div>`: '<span>ロック中</span>'}</div>`;
+                dom['unlock-features-container'].appendChild(el);
+                
+                if (playerData.unlocks.autoRoll) {
+                    dom['auto-roll-toggle'].addEventListener('change', toggleAutoRoll);
+                }
+                if (playerData.unlocks.multiRoll) {
+                    const slider = dom['multi-roll-slider'];
+                    const valueDisplay = dom['multi-roll-value'];
+                    slider.addEventListener('input', (e) => {
+                        const rollAmount = Math.pow(2, parseInt(e.target.value));
+                        valueDisplay.textContent = rollAmount.toLocaleString('ja-JP');
+                    });
+                }
+            }
+        };
+        const checkUnlocksAndAchievements = (newlyDiscoveredBlocks) => {
+            let updated = false;
+            const highestNewLogProb = Math.max(0, ...Array.from(newlyDiscoveredBlocks).map(b => b.logProb));
+            
+            if (!playerData.unlocks.autoRoll && highestNewLogProb >= UNLOCK_THRESHOLDS.autoRoll) { playerData.unlocks.autoRoll = true; updated = true; }
+            if (!playerData.unlocks.multiRoll && highestNewLogProb >= UNLOCK_THRESHOLDS.multiRoll) { playerData.unlocks.multiRoll = true; updated = true; }
+            if(updated) updateUnlocksUI();
+
+            const discoveredRarities = new Set(Array.from(newlyDiscoveredBlocks).map(b => b.rarity));
+
+            ACHIEVEMENTS.forEach(ach => {
+                if(playerData.achievements[ach.id]) return;
+                let achieved = false;
+                if (ach.type === 'rolls' && playerData.stats.rolls >= ach.goal) achieved = true;
+                if (ach.type === 'discovery_rarity' && discoveredRarities.has(ach.rarity)) achieved = true;
+                if (ach.type === 'discovery_count' && Object.keys(playerData.discoveredBlocks).length >= ach.goal) achieved = true;
+                if (ach.type === 'stars' && playerData.stats.stars >= ach.goal) achieved = true;
+                if (achieved) playerData.achievements[ach.id] = { timestamp: Date.now() };
+            });
+        };
+        const toggleAutoRoll = (event) => {
+            if(event.target.checked) {
+                dom['roll-button'].disabled = true;
+                autoRollInterval = setInterval(doRoll, 50);
+            } else {
+                clearInterval(autoRollInterval);
+                autoRollInterval = null;
+                dom['roll-button'].disabled = false;
+            }
+        };
+        
+        dom['roll-button'].addEventListener('click', doRoll);
+        dom['settings-button'].addEventListener('click', () => {
+            const content = dom['settings-modal-template'].content.cloneNode(true);
+            openModal('settings-modal', content, null);
+            
+            const modal = dom['settings-modal'];
+            const animationToggle = modal.querySelector('#animation-toggle');
+            animationToggle.checked = playerData.settings.showAnimation;
+            animationToggle.addEventListener('change', (e) => {
+                playerData.settings.showAnimation = e.target.checked;
+                saveData();
+            });
+
+            modal.querySelector('#show-cheat-btn').addEventListener('click', (e) => { e.target.style.display = 'none'; modal.querySelector('#cheat-content').style.display = 'block'; });
+            const activateCheat = () => { playerData.cheats.used = true; saveData(); };
+            modal.querySelector('#cheat-unlock-features').addEventListener('click', () => { activateCheat(); Object.keys(playerData.unlocks).forEach(k => playerData.unlocks[k] = true); updateUnlocksUI(); alert("全ての機能がアンロックされました。"); });
+            modal.querySelector('#cheat-unlock-blocks').addEventListener('click', () => { 
+                if(confirm("本当に全てのブロックを入手しますか？ (星も加算されます)")){ 
+                    activateCheat(); 
+                    const ts = Date.now();
+                    let starsToAdd = 0;
+                    BLOCKS.forEach(b => { 
+                        if(!playerData.discoveredBlocks[b.id]) {
+                            playerData.discoveredBlocks[b.id] = {timestamp: ts};
+                            starsToAdd += getStarsForBlock(b);
+                        }
+                    });
+                    playerData.stats.stars += starsToAdd;
+                    playerData.stats.stars = Math.min(playerData.stats.stars, TOTAL_STARS);
+                    updateStarDisplay();
+                    alert(`全てのブロックを入手し、${starsToAdd.toLocaleString()}個の星を獲得しました。`); 
+                }
+            });
+            modal.querySelector('#cheat-unlock-achievements').addEventListener('click', () => { if(confirm("本当に全ての実績をアンロックしますか？")){ activateCheat(); playerData.achievements = ACHIEVEMENTS.reduce((acc, ach) => ({...acc, [ach.id]: {timestamp:Date.now()}}), {}); alert("全ての実績をアンロックしました。"); }});
+            modal.querySelector('#cheat-super-multi-roll').addEventListener('click', () => { activateCheat(); playerData.cheats.superMultiRoll = true; if(!playerData.unlocks.multiRoll){playerData.unlocks.multiRoll = true;} updateUnlocksUI(); alert("複数回ロールの上限が約100万回に解放されました。"); });
+            modal.querySelector('#cheat-set-stars').addEventListener('click', () => {
+                activateCheat();
+                const input = prompt("新しい星の値を入力してください:", playerData.stats.stars);
+                if (input === null) return;
+                const newValue = parseInt(input, 10);
+                if (!isNaN(newValue) && newValue >= 0) {
+                    playerData.stats.stars = Math.min(newValue, TOTAL_STARS);
+                    saveData();
+                    updateStarDisplay();
+                    alert(`星が ${playerData.stats.stars.toLocaleString()} に設定されました。`);
+                } else {
+                    alert("無効な値です。0以上の数値を入力してください。");
+                }
+            });
+            modal.querySelector('#reset-data-btn').addEventListener('click', () => { if (confirm('本当に全てのデータをリセットしますか？この操作は取り消せません。ページがリロードされます。')) { localStorage.removeItem('rngBlockGameData'); location.reload(); }});
         });
-    </script>
+        
+        dom['collection-button'].addEventListener('click', () => {
+            collectionCurrentPage = 1;
+            const content = dom['collection-modal-template'].content.cloneNode(true);
+            const modalId = 'collection-modal';
+            
+            const rarityFilter = content.querySelector('#rarity-filter');
+            RARITY_ORDER.forEach(r => rarityFilter.add(new Option(r, r)));
+            
+            const updateFunc = () => {
+                const modal = dom[modalId];
+                if (!modal || modal.style.display === 'none') return;
+
+                const discoveredCount = Object.keys(playerData.discoveredBlocks).length;
+                modal.querySelector('#collection-progress').textContent = `発見済み: ${discoveredCount} / ${TOTAL_BLOCKS} (${(discoveredCount / TOTAL_BLOCKS * 100).toFixed(2)}%)`;
+                
+                const searchTerm = modal.querySelector('#search-input').value.toLowerCase();
+                const rarity = modal.querySelector('#rarity-filter').value;
+                const discoveredFilter = modal.querySelector('#discovered-filter').value;
+                const [sortKey, sortDir] = modal.querySelector('#sort-order').value.split('-');
+                let filtered = [...BLOCKS].filter(b => {
+                    const isDiscovered = !!playerData.discoveredBlocks[b.id];
+                    if (discoveredFilter === 'discovered' && !isDiscovered) return false;
+                    if (discoveredFilter === 'undiscovered' && isDiscovered) return false;
+                    if (rarity !== 'all' && b.rarity !== rarity) return false;
+                    if (searchTerm && !b.name.toLowerCase().includes(searchTerm)) return false;
+                    return true;
+                });
+                filtered.sort((a, b) => {
+                    let valA, valB;
+                    if (sortKey === 'timestamp') {
+                        valA = playerData.discoveredBlocks[a.id]?.timestamp || 0;
+                        valB = playerData.discoveredBlocks[b.id]?.timestamp || 0;
+                    } else { valA = a[sortKey]; valB = b[sortKey]; }
+                    if (typeof valA === 'string') return sortDir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                    return sortDir === 'asc' ? valA - valB : valB - valA;
+                });
+                const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+                collectionCurrentPage = Math.min(collectionCurrentPage, totalPages);
+                const startIndex = (collectionCurrentPage - 1) * ITEMS_PER_PAGE;
+                const itemsToShow = filtered.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+                const grid = modal.querySelector('#collection-grid');
+                grid.innerHTML = itemsToShow.map(b => `<div class="block-card ${!!playerData.discoveredBlocks[b.id] ? '' : 'not-discovered'}" data-block-id="${b.id}">${!!playerData.discoveredBlocks[b.id] ? `<div class="block-card-name">${b.name}</div>` : `<div style="opacity:0.5; font-size: 1.5rem;">?</div>`}</div>`).join('');
+                
+                modal.querySelector('#collection-page-info').textContent = `ページ ${collectionCurrentPage} / ${totalPages}`;
+                modal.querySelector('#collection-prev').disabled = collectionCurrentPage === 1;
+                modal.querySelector('#collection-next').disabled = collectionCurrentPage === totalPages;
+            };
+
+            openModal(modalId, content, updateFunc);
+            updateFunc();
+
+            const modal = dom[modalId];
+            ['#search-input', '#rarity-filter', '#sort-order', '#discovered-filter'].forEach(id => modal.querySelector(id).addEventListener('input', () => {collectionCurrentPage=1; updateFunc();}));
+            modal.querySelector('#collection-prev').addEventListener('click', () => { if(collectionCurrentPage > 1) { collectionCurrentPage--; updateFunc(); }});
+            modal.querySelector('#collection-next').addEventListener('click', () => { if (!modal.querySelector('#collection-next').disabled) { collectionCurrentPage++; updateFunc(); }});
+            modal.querySelector('#collection-grid').addEventListener('click', (e) => {
+                const card = e.target.closest('.block-card:not(.not-discovered)');
+                if (card) {
+                    const blockId = parseInt(card.dataset.blockId, 10);
+                    showBlockDetails(blockId);
+                }
+            });
+        });
+
+        dom['achievements-button'].addEventListener('click', () => {
+            achievementsCurrentPage = 1;
+            const content = dom['achievements-modal-template'].content.cloneNode(true);
+            const modalId = 'achievements-modal';
+            let isFirstRender = true;
+
+            const updateFunc = () => {
+                const modal = dom[modalId];
+                if (!modal || modal.style.display === 'none') return;
+
+                const unlockedCount = Object.keys(playerData.achievements).length;
+                modal.querySelector('#achievement-progress').textContent = `達成済み: ${unlockedCount} / ${ACHIEVEMENTS.length} (${(unlockedCount / ACHIEVEMENTS.length * 100).toFixed(2)}%)`;
+                const totalPages = Math.max(1, Math.ceil(ACHIEVEMENTS.length / ITEMS_PER_PAGE));
+                achievementsCurrentPage = Math.min(achievementsCurrentPage, totalPages);
+                
+                const startIndex = (achievementsCurrentPage - 1) * ITEMS_PER_PAGE;
+                const itemsToShow = ACHIEVEMENTS.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+                
+                const list = modal.querySelector('#achievement-list');
+                
+                if (isFirstRender) {
+                    list.innerHTML = itemsToShow.map(ach => {
+                        const unlocked = playerData.achievements[ach.id]; let progress = 0, goal = 1, showProgress = false;
+                        if (ach.type === 'rolls') { progress = Math.min(playerData.stats.rolls, ach.goal); goal = ach.goal; showProgress = true; }
+                        else if (ach.type === 'discovery_count') { progress = Math.min(Object.keys(playerData.discoveredBlocks).length, ach.goal); goal = ach.goal; showProgress = true; }
+                         else if (ach.type === 'stars') { progress = Math.min(playerData.stats.stars, ach.goal); goal = ach.goal; showProgress = true; }
+                        const progressPercent = unlocked ? 100 : (progress / goal) * 100;
+                        return `<div class="achievement-item ${unlocked ? 'unlocked' : ''}" data-achievement-id="${ach.id}" style="animation: fadeIn 0.5s ease;"><div class="achievement-header"><span class="achievement-name">${ach.name}</span><span>${unlocked ? '達成済み' : ''}</span></div><p class="achievement-desc">${ach.desc}</p>${showProgress ? `<div class="progress-bar"><div class="progress-bar-inner" style="width: ${progressPercent}%"></div></div><p style="text-align: right; font-size: 0.8rem;">${progress.toLocaleString()} / ${goal.toLocaleString()} (${progressPercent.toFixed(1)}%)</p>` : ''}</div>`;
+                    }).join('');
+                    isFirstRender = false;
+                } else {
+                    list.querySelectorAll('.achievement-item').forEach((el, index) => {
+                        const ach = itemsToShow[index];
+                        if (!ach) return;
+                        const unlocked = playerData.achievements[ach.id];
+                        el.classList.toggle('unlocked', !!unlocked);
+                        el.querySelector('.achievement-header span:last-child').textContent = unlocked ? '達成済み' : '';
+                        
+                        if (ach.type === 'rolls' || ach.type === 'discovery_count' || ach.type === 'stars') {
+                            let progress = 0;
+                            if (ach.type === 'rolls') progress = Math.min(playerData.stats.rolls, ach.goal);
+                            else if (ach.type === 'discovery_count') progress = Math.min(Object.keys(playerData.discoveredBlocks).length, ach.goal);
+                            else if (ach.type === 'stars') progress = Math.min(playerData.stats.stars, ach.goal);
+                            
+                            const progressPercent = unlocked ? 100 : (progress / ach.goal) * 100;
+                            el.querySelector('.progress-bar-inner').style.width = `${progressPercent}%`;
+                            el.querySelector('p[style*="text-align: right"]').textContent = `${progress.toLocaleString()} / ${ach.goal.toLocaleString()} (${progressPercent.toFixed(1)}%)`;
+                        }
+                    });
+                }
+
+                modal.querySelector('#achievement-page-info').textContent = `ページ ${achievementsCurrentPage} / ${totalPages}`;
+                modal.querySelector('#achievement-prev').disabled = achievementsCurrentPage === 1;
+                modal.querySelector('#achievement-next').disabled = achievementsCurrentPage === totalPages;
+            };
+
+            openModal(modalId, content, updateFunc);
+            updateFunc();
+
+            const modal = dom[modalId];
+            modal.querySelector('#achievement-prev').addEventListener('click', () => { if(achievementsCurrentPage > 1) { achievementsCurrentPage--; isFirstRender = true; updateFunc(); }});
+            modal.querySelector('#achievement-next').addEventListener('click', () => { if(!modal.querySelector('#achievement-next').disabled) { achievementsCurrentPage++; isFirstRender = true; updateFunc(); }});
+        });
+
+        dom['stats-button'].addEventListener('click', () => {
+            const content = dom['stats-modal-template'].content.cloneNode(true);
+            const modalId = 'stats-modal';
+            
+            const updateFunc = () => {
+                const modal = dom[modalId];
+                if (!modal || modal.style.display === 'none') return;
+
+                const discoveredCount = Object.keys(playerData.discoveredBlocks).length;
+                const achievementsCount = Object.keys(playerData.achievements).length;
+                const rarestBlock = BLOCKS.find(b => b.logProb === playerData.stats.highestLogProb);
+                const starsPercent = TOTAL_STARS > 0 ? (playerData.stats.stars / TOTAL_STARS * 100).toFixed(2) : "0.00";
+                const playTime = formatPlayTime(Date.now() - playerData.stats.startTime);
+                
+                modal.querySelector('#stats-info').innerHTML = `
+                    <div class="info-row"><span>プレイ時間:</span><span>${playTime}</span></div>
+                    <div class="info-row"><span>総ロール回数:</span><span>${playerData.stats.rolls.toLocaleString()} 回</span></div>
+                    <div class="info-row"><span>獲得した星:</span><span>${playerData.stats.stars.toLocaleString()} / ${TOTAL_STARS.toLocaleString()} (${starsPercent}%)</span></div>
+                    <div class="info-row"><span>発見したブロック:</span><span>${discoveredCount.toLocaleString()} / ${TOTAL_BLOCKS.toLocaleString()} 種類 (${(discoveredCount / TOTAL_BLOCKS * 100).toFixed(2)}%)</span></div>
+                    <div class="info-row"><span>達成した実績:</span><span>${achievementsCount.toLocaleString()} / ${ACHIEVEMENTS.length.toLocaleString()} 個 (${(achievementsCount / ACHIEVEMENTS.length * 100).toFixed(2)}%)</span></div>
+                    <div class="info-row"><span>最もレアな発見:</span><span>${rarestBlock ? rarestBlock.name : 'なし'}</span></div>
+                `;
+            };
+
+            openModal(modalId, content, updateFunc);
+            updateFunc();
+        });
+
+        dom['help-button'].addEventListener('click', () => {
+            const content = dom['help-modal-template'].content.cloneNode(true);
+            openModal('help-modal', content, null);
+        });
+        dom['rarity-info-button'].addEventListener('click', () => {
+            const content = dom['rarity-info-modal-template'].content.cloneNode(true);
+            let tableHTML = `<table id="rarity-info-table"><tr><th>レア度</th><th>確率の目安 (これ以上)</th></tr>`;
+            RARITY_ORDER.forEach(rarity => {
+                const data = RARITY_DATA[rarity];
+                const prob = formatProb(data.threshold);
+                tableHTML += `<tr>
+                    <td><span class="rarity-color-swatch" style="background:${data.color}"></span>${rarity}</td>
+                    <td>${prob}</td>
+                </tr>`;
+            });
+            tableHTML += `</table>`;
+            content.querySelector('#rarity-info-body').innerHTML = tableHTML;
+            openModal('rarity-info-modal', content, null);
+        });
+
+        const showBlockDetails = (blockId) => {
+            const block = BLOCKS.find(b => b.id === blockId);
+            const discoveryInfo = playerData.discoveredBlocks[blockId];
+            if (!block || !discoveryInfo) return;
+            
+            const content = dom['detail-modal-template'].content.cloneNode(true);
+            const cardContainer = content.querySelector('#detail-card-container');
+            cardContainer.innerHTML = `<div class="block-card"><div class="block-card-name">${block.name}</div><div class="block-card-rarity" style="background: ${RARITY_DATA[block.rarity].color}">${block.rarity}</div><div class="block-card-prob">${formatProb(block.logProb)}</div></div>`;
+            
+            const date = new Date(discoveryInfo.timestamp).toLocaleString('ja-JP');
+            const stars = getStarsForBlock(block);
+            content.querySelector('#detail-info').innerHTML = `
+                <div class="info-row"><span>初回入手時の星:</span><span style="color: var(--star-color); font-weight: bold;">+${stars.toLocaleString()}</span></div>
+                <div class="info-row"><span>初入手時刻:</span><span>${date}</span></div>
+                <div class="info-row"><span>チート使用:</span><span>${playerData.cheats.used ? 'はい' : 'いいえ'}</span></div>
+            `;
+
+            const actionsContainer = content.querySelector('#detail-actions');
+            actionsContainer.innerHTML = '';
+            if (RARITY_ORDER.indexOf(block.rarity) >= RARITY_ORDER.indexOf('エピック')) {
+                const replayButton = document.createElement('button');
+                replayButton.textContent = '演出を再生';
+                replayButton.className = 'btn';
+                replayButton.addEventListener('click', () => {
+                    playRarityAnimation(block.rarity);
+                });
+                actionsContainer.appendChild(replayButton);
+            }
+            openModal('detail-modal', content, null);
+        };
+
+        const initialize = () => {
+            createBlocks();
+            createAchievements();
+            loadData();
+            updateUnlocksUI();
+            updateStarDisplay();
+            dom['result-block'].innerHTML = '<p>「回す」ボタンを押して始めよう！</p>';
+            dom['result-block'].classList.add('found');
+
+            setInterval(() => {
+                if (activeModalUpdateCallback) {
+                    activeModalUpdateCallback();
+                }
+            }, 500);
+        };
+        initialize();
+    });
+</script>
 </body>
 </html>
