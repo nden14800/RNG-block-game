@@ -975,7 +975,7 @@
                 const playTime = formatPlayTime(Date.now() - playerData.stats.startTime);
                 
                 modal.querySelector('#stats-info').innerHTML = `
-                    <div class="info-row"><span>プレイ時間:</span><span>${playTime}</span></div>
+                    <div class="info-row"><span>最初にプレイしてからの経過時間:</span><span>${playTime}</span></div>
                     <div class="info-row"><span>総ロール回数:</span><span>${playerData.stats.rolls.toLocaleString()} 回</span></div>
                     <div class="info-row"><span>獲得した星:</span><span>${playerData.stats.stars.toLocaleString()} / ${TOTAL_STARS.toLocaleString()} (${starsPercent}%)</span></div>
                     <div class="info-row"><span>発見したブロック:</span><span>${discoveredCount.toLocaleString()} / ${TOTAL_BLOCKS.toLocaleString()} 種類 (${(discoveredCount / TOTAL_BLOCKS * 100).toFixed(2)}%)</span></div>
