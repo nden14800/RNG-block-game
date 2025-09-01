@@ -27,6 +27,9 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Roboto Mono', monospace; background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; transition: background-color 0.3s, color 0.3s; overflow: hidden; }
+    body.custom-cursor-enabled, body.custom-cursor-enabled * {
+        cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" stroke="black" stroke-width="1" class="bi bi-cursor" viewBox="0 0 16 16"> <path d="M14.082 2.182a.5.5 0 0 1 .103.557L8.528 15.467a.5.5 0 0 1-.917-.007L5.57 10.694.803 8.652a.5.5 0 0 1-.006-.916l12.728-5.657a.5.5 0 0 1 .556.103zM2.25 8.184l3.897 1.67a.5.5 0 0 1 .262.263l1.67 3.897L12.743 3.52z"/></svg>') 0 0, auto !important;
+    }
     main { text-align: center; width: 100%; max-width: 600px; z-index: 10; animation: fadeIn 0.5s ease-in-out; }
     h1 { margin-bottom: 1rem; }
     .star-display { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem; margin-bottom: 1rem; color: var(--star-color); animation: fadeIn 0.5s ease-in-out; }
@@ -105,15 +108,15 @@
     .btn.btn-danger:hover { background-color: #c82333; }
     #collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; animation: fadeIn 0.5s ease; }
     .pagination-controls { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 20px; padding-top: 10px; border-top: 1px solid var(--border-color); }
-    .block-card { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; }
-    .block-card.not-discovered { opacity: 0.6; cursor: default; }
+    .block-card { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; min-height: 120px; }
+    .block-card.not-discovered { opacity: 0.6; cursor: default; justify-content: center; }
     .block-card-name { font-weight: bold; font-size: 1.1rem; word-wrap: break-word; }
     .block-card-rarity { font-size: 0.9rem; margin: 10px 0; padding: 2px 6px; border-radius: 4px; display: inline-block; color: white; font-weight: bold; }
     .rarity-Cosmic { background: var(--rarity-cosmic); background-size: 200% 200%; animation: cosmic-gradient 3s ease infinite; color: #111; }
     .block-card-prob { font-size: 0.8rem; min-height: 2.5em; display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; gap: 0.5em; white-space: nowrap; }
-    #detail-modal .block-card { margin: 0 auto 1rem auto; max-width: 300px; }
-    #detail-info { text-align: left; display: flex; flex-direction: column; gap: 0.5rem; }
-    #detail-actions { text-align: center; margin-top: 1rem; }
+    .block-card-actions { height: 40px; margin-top: 10px; display: flex; justify-content: center; align-items: center; }
+    .replay-animation-btn { width: 36px; height: 36px; }
+    .replay-animation-btn svg { width: 18px; height: 18px; }
     .info-row { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border-color); padding: 5px 0; }
     .info-row span:first-child { font-weight: bold; }
     .achievement-item { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; opacity: 0.5; margin-bottom: 10px; }
@@ -145,6 +148,28 @@
     #rarity-info-table th { background-color: var(--bg-color); }
     .rarity-color-swatch { display: inline-block; width: 1em; height: 1em; border-radius: 50%; margin-right: 0.5em; vertical-align: middle; }
 
+    /* --- Tooltip CSS --- */
+    .detail-tooltip {
+        display: none;
+        position: fixed;
+        background-color: var(--secondary-bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 10px 15px;
+        box-shadow: 0 4px 12px var(--shadow-color);
+        z-index: 2000;
+        pointer-events: none;
+        max-width: 280px;
+        word-wrap: break-word;
+        transition: opacity 0.1s ease-in-out;
+        opacity: 0;
+        text-align: center;
+    }
+    .detail-tooltip.show {
+        display: block;
+        opacity: 1;
+    }
+    
     /* --- 演出用CSS --- */
     #rarity-animation-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -248,10 +273,12 @@
 <div id="settings-modal" class="modal"></div>
 <div id="collection-modal" class="modal"></div>
 <div id="achievements-modal" class="modal"></div>
-<div id="detail-modal" class="modal"></div>
 <div id="stats-modal" class="modal"></div>
 <div id="help-modal" class="modal"></div>
 <div id="rarity-info-modal" class="modal"></div>
+
+<!-- Tooltip Element -->
+<div id="detail-tooltip" class="detail-tooltip"></div>
 
 <template id="settings-modal-template">
     <div class="modal-content">
@@ -261,6 +288,17 @@
                 <span>エピック以上のブロックが出た時の特別演出</span>
                 <label class="switch">
                     <input type="checkbox" id="animation-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+             <div class="setting-item">
+                <span>カスタムカーソルを表示
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cursor" viewBox="0 0 16 16" style="vertical-align: -3px; margin-left: 5px;">
+                        <path d="M14.082 2.182a.5.5 0 0 1 .103.557L8.528 15.467a.5.5 0 0 1-.917-.007L5.57 10.694.803 8.652a.5.5 0 0 1-.006-.916l12.728-5.657a.5.5 0 0 1 .556.103zM2.25 8.184l3.897 1.67a.5.5 0 0 1 .262.263l1.67 3.897L12.743 3.52z"/>
+                    </svg>
+                </span>
+                <label class="switch">
+                    <input type="checkbox" id="custom-cursor-toggle">
                     <span class="slider"></span>
                 </label>
             </div>
@@ -311,17 +349,6 @@
     </div>
 </template>
 
-<template id="detail-modal-template">
-    <div class="modal-content">
-        <div class="modal-header"><h2>ブロック詳細</h2><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
-        <div class="modal-body">
-            <div id="detail-card-container"></div>
-            <div id="detail-info"></div>
-            <div id="detail-actions"></div>
-        </div>
-    </div>
-</template>
-
 <template id="stats-modal-template">
     <div class="modal-content">
         <div class="modal-header"><h2>統計情報</h2><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
@@ -340,7 +367,7 @@
             <p>新しいブロックを初めて見つけると、そのブロックのレア度に応じて「星」を獲得できます。星を集めて、自分の進捗を確かめましょう！</p>
             <br>
              <h3>演出</h3>
-            <p>「エピック」以上のレア度のブロックをその回のロールで最もレアなものとして入手すると、特別な演出が表示されます。演出は設定からON/OFFを切り替えられます。</p>
+            <p>「エピック」以上のレア度のブロックをその回のロールで最もレアなものとして入手すると、特別な演出が表示されます。演出は設定からON/OFFを切り替えられます。コレクション画面のボタンから再確認もできます。</p>
             <br>
             <h3>機能のアンロック</h3>
             <p>特定のレア度のブロックを初めて見つけると、便利な機能が自動で解放されます。</p>
@@ -348,6 +375,9 @@
                 <li><b>オートロール (1/100以上):</b> ボタンを自動で押し続けてくれます。</li>
                 <li><b>複数回ロール (1/10,000以上):</b> 一度にまとめてロールできるようになります。スライダーで2倍ずつ回数を変更できます。</li>
             </ul>
+            <br>
+            <h3>コレクション画面での操作</h3>
+            <p>コレクションのブロックにマウスカーソルを合わせるか、指で触れると、そのブロックの詳細情報がツールチップで表示されます。指を動かすと他のブロックの情報もスムーズに確認できます。</p>
             <br>
             <h3>画面のボタン</h3>
             <ul style="list-style: none; padding-left: 0;">
@@ -594,10 +624,11 @@
         const saveData = () => localStorage.setItem('rngBlockGameData', JSON.stringify(playerData));
         const loadData = () => {
             const saved = localStorage.getItem('rngBlockGameData');
-            const defaults = { discoveredBlocks: {}, achievements: {}, settings: { showAnimation: true }, stats: { rolls: 0, highestLogProb: 0, stars: 0, startTime: Date.now() }, unlocks: { autoRoll: false, multiRoll: false }, cheats: { used: false } };
+            const defaults = { discoveredBlocks: {}, achievements: {}, settings: { showAnimation: true, useCustomCursor: false }, stats: { rolls: 0, highestLogProb: 0, stars: 0, startTime: Date.now() }, unlocks: { autoRoll: false, multiRoll: false }, cheats: { used: false } };
             playerData = saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
             if (!playerData.settings) playerData.settings = defaults.settings;
             if (playerData.settings.showAnimation === undefined) playerData.settings.showAnimation = true;
+            if (playerData.settings.useCustomCursor === undefined) playerData.settings.useCustomCursor = false;
             if (!playerData.stats) playerData.stats = defaults.stats;
             if (playerData.stats.stars === undefined) playerData.stats.stars = 0;
             if (!playerData.stats.startTime) playerData.stats.startTime = Date.now();
@@ -780,6 +811,14 @@
             }
         };
         
+        const updateCustomCursor = () => {
+            if (playerData.settings.useCustomCursor) {
+                document.body.classList.add('custom-cursor-enabled');
+            } else {
+                document.body.classList.remove('custom-cursor-enabled');
+            }
+        };
+
         dom['roll-button'].addEventListener('click', doRoll);
         dom['settings-button'].addEventListener('click', () => {
             const content = dom['settings-modal-template'].content.cloneNode(true);
@@ -790,6 +829,14 @@
             animationToggle.checked = playerData.settings.showAnimation;
             animationToggle.addEventListener('change', (e) => {
                 playerData.settings.showAnimation = e.target.checked;
+                saveData();
+            });
+
+            const customCursorToggle = modal.querySelector('#custom-cursor-toggle');
+            customCursorToggle.checked = playerData.settings.useCustomCursor;
+            customCursorToggle.addEventListener('change', (e) => {
+                playerData.settings.useCustomCursor = e.target.checked;
+                updateCustomCursor();
                 saveData();
             });
 
@@ -873,7 +920,29 @@
                 const startIndex = (collectionCurrentPage - 1) * ITEMS_PER_PAGE;
                 const itemsToShow = filtered.slice(startIndex, startIndex + ITEMS_PER_PAGE);
                 const grid = modal.querySelector('#collection-grid');
-                grid.innerHTML = itemsToShow.map(b => `<div class="block-card ${!!playerData.discoveredBlocks[b.id] ? '' : 'not-discovered'}" data-block-id="${b.id}">${!!playerData.discoveredBlocks[b.id] ? `<div class="block-card-name">${b.name}</div>` : `<div style="opacity:0.5; font-size: 1.5rem;">?</div>`}</div>`).join('');
+                grid.innerHTML = itemsToShow.map(b => {
+                    const isDiscovered = !!playerData.discoveredBlocks[b.id];
+                    let contentHTML = `<div style="opacity:0.5; font-size: 1.5rem; flex-grow: 1; display:flex; align-items:center; justify-content:center;">?</div>`;
+                    if (isDiscovered) {
+                        const canReplay = RARITY_ORDER.indexOf(b.rarity) >= RARITY_ORDER.indexOf('エピック');
+                        contentHTML = `
+                            <div style="flex-grow: 1;">
+                                <div class="block-card-name">${b.name}</div>
+                            </div>
+                            <div class="block-card-actions">
+                                ${canReplay ? `
+                                <button class="icon-button replay-animation-btn" title="演出を再生" data-rarity="${b.rarity}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-circle" viewBox="0 0 16 16">
+                                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                      <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445"/>
+                                    </svg>
+                                </button>
+                                ` : ''}
+                            </div>
+                        `;
+                    }
+                    return `<div class="block-card ${isDiscovered ? '' : 'not-discovered'}" data-block-id="${b.id}">${contentHTML}</div>`;
+                }).join('');
                 
                 modal.querySelector('#collection-page-info').textContent = `ページ ${collectionCurrentPage} / ${totalPages}`;
                 modal.querySelector('#collection-prev').disabled = collectionCurrentPage === 1;
@@ -887,13 +956,89 @@
             ['#search-input', '#rarity-filter', '#sort-order', '#discovered-filter'].forEach(id => modal.querySelector(id).addEventListener('input', () => {collectionCurrentPage=1; updateFunc();}));
             modal.querySelector('#collection-prev').addEventListener('click', () => { if(collectionCurrentPage > 1) { collectionCurrentPage--; updateFunc(); }});
             modal.querySelector('#collection-next').addEventListener('click', () => { if (!modal.querySelector('#collection-next').disabled) { collectionCurrentPage++; updateFunc(); }});
-            modal.querySelector('#collection-grid').addEventListener('click', (e) => {
-                const card = e.target.closest('.block-card:not(.not-discovered)');
-                if (card) {
-                    const blockId = parseInt(card.dataset.blockId, 10);
-                    showBlockDetails(blockId);
+            
+            // --- Tooltip & Replay Button Logic ---
+            const grid = modal.querySelector('#collection-grid');
+            const detailTooltip = dom['detail-tooltip'];
+            let activeTooltipTarget = null;
+            let lastMoveEvent = null;
+            let tooltipUpdateTicking = false;
+            
+            grid.addEventListener('click', e => {
+                const btn = e.target.closest('.replay-animation-btn');
+                if (btn) {
+                    e.stopPropagation();
+                    const rarity = btn.dataset.rarity;
+                    if (rarity) playRarityAnimation(rarity);
+                    return;
                 }
             });
+
+            const updateTooltipPosition = (e) => {
+                if (!detailTooltip.classList.contains('show')) return;
+                const clientX = e.clientX ?? e.touches[0].clientX;
+                const clientY = e.clientY ?? e.touches[0].clientY;
+                let x = clientX + 15;
+                let y = clientY + 15;
+                const tooltipRect = detailTooltip.getBoundingClientRect();
+                if (window.innerWidth > 0 && x + tooltipRect.width > window.innerWidth) x = clientX - tooltipRect.width - 15;
+                if (window.innerHeight > 0 && y + tooltipRect.height > window.innerHeight) y = clientY - tooltipRect.height - 15;
+                detailTooltip.style.left = `${Math.max(5, x)}px`;
+                detailTooltip.style.top = `${Math.max(5, y)}px`;
+            };
+
+            const showTooltip = (target, e) => {
+                const blockId = parseInt(target.dataset.blockId, 10);
+                const block = BLOCKS.find(b => b.id === blockId);
+                const discoveryInfo = playerData.discoveredBlocks[blockId];
+                if (!block || !discoveryInfo) return;
+                
+                detailTooltip.innerHTML = `
+                    <div class="block-card-name" style="font-size: 1.1rem; font-weight: bold;">${block.name}</div>
+                    <div class="block-card-rarity" style="background: ${RARITY_DATA[block.rarity].color}; display: inline-block; padding: 2px 6px; border-radius: 4px; color: white; font-weight: bold; margin: 5px 0;">${block.rarity}</div>
+                    <div class="block-card-prob">${formatProb(block.logProb)}</div>
+                    <div style="border-top: 1px dashed var(--border-color); margin-top: 8px; padding-top: 8px; text-align: left; font-size: 0.85rem;">
+                        <div style="display: flex; justify-content: space-between;"><strong>星:</strong> <span>+${getStarsForBlock(block).toLocaleString()}</span></div>
+                        <div style="display: flex; justify-content: space-between;"><strong>入手:</strong> <span>${new Date(discoveryInfo.timestamp).toLocaleString('ja-JP')}</span></div>
+                        <div style="display: flex; justify-content: space-between;"><strong>チート使用:</strong> <span>${playerData.cheats.used ? 'はい' : 'いいえ'}</span></div>
+                    </div>
+                `;
+                detailTooltip.classList.add('show');
+                updateTooltipPosition(e);
+            };
+
+            const hideTooltip = () => {
+                if (detailTooltip.classList.contains('show')) detailTooltip.classList.remove('show');
+                activeTooltipTarget = null;
+            };
+
+            const handleMove = (e) => {
+                lastMoveEvent = e;
+                if (tooltipUpdateTicking) return;
+                tooltipUpdateTicking = true;
+                requestAnimationFrame(() => {
+                    const clientX = lastMoveEvent.clientX ?? lastMoveEvent.touches[0].clientX;
+                    const clientY = lastMoveEvent.clientY ?? lastMoveEvent.touches[0].clientY;
+                    const currentElement = document.elementFromPoint(clientX, clientY);
+                    const card = currentElement ? currentElement.closest('.block-card:not(.not-discovered)') : null;
+                    if (card) {
+                        if (card !== activeTooltipTarget) {
+                            activeTooltipTarget = card;
+                            showTooltip(card, lastMoveEvent);
+                        }
+                        updateTooltipPosition(lastMoveEvent);
+                    } else {
+                        hideTooltip();
+                    }
+                    tooltipUpdateTicking = false;
+                });
+            };
+
+            grid.addEventListener('mousemove', handleMove);
+            grid.addEventListener('mouseleave', hideTooltip);
+            grid.addEventListener('touchstart', (e) => { handleMove(e); }, { passive: true });
+            grid.addEventListener('touchmove', (e) => { e.preventDefault(); handleMove(e); }, { passive: false });
+            grid.addEventListener('touchend', hideTooltip);
         });
 
         dom['achievements-button'].addEventListener('click', () => {
@@ -1008,43 +1153,13 @@
             openModal('rarity-info-modal', content, null);
         });
 
-        const showBlockDetails = (blockId) => {
-            const block = BLOCKS.find(b => b.id === blockId);
-            const discoveryInfo = playerData.discoveredBlocks[blockId];
-            if (!block || !discoveryInfo) return;
-            
-            const content = dom['detail-modal-template'].content.cloneNode(true);
-            const cardContainer = content.querySelector('#detail-card-container');
-            cardContainer.innerHTML = `<div class="block-card"><div class="block-card-name">${block.name}</div><div class="block-card-rarity" style="background: ${RARITY_DATA[block.rarity].color}">${block.rarity}</div><div class="block-card-prob">${formatProb(block.logProb)}</div></div>`;
-            
-            const date = new Date(discoveryInfo.timestamp).toLocaleString('ja-JP');
-            const stars = getStarsForBlock(block);
-            content.querySelector('#detail-info').innerHTML = `
-                <div class="info-row"><span>初回入手時の星:</span><span style="color: var(--star-color); font-weight: bold;">+${stars.toLocaleString()}</span></div>
-                <div class="info-row"><span>初入手時刻:</span><span>${date}</span></div>
-                <div class="info-row"><span>チート使用:</span><span>${playerData.cheats.used ? 'はい' : 'いいえ'}</span></div>
-            `;
-
-            const actionsContainer = content.querySelector('#detail-actions');
-            actionsContainer.innerHTML = '';
-            if (RARITY_ORDER.indexOf(block.rarity) >= RARITY_ORDER.indexOf('エピック')) {
-                const replayButton = document.createElement('button');
-                replayButton.textContent = '演出を再生';
-                replayButton.className = 'btn';
-                replayButton.addEventListener('click', () => {
-                    playRarityAnimation(block.rarity);
-                });
-                actionsContainer.appendChild(replayButton);
-            }
-            openModal('detail-modal', content, null);
-        };
-
         const initialize = () => {
             createBlocks();
             createAchievements();
             loadData();
             updateUnlocksUI();
             updateStarDisplay();
+            updateCustomCursor();
             dom['result-block'].innerHTML = '<p>「回す」ボタンを押して始めよう！</p>';
             dom['result-block'].classList.add('found');
 
