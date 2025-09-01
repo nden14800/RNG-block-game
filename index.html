@@ -27,9 +27,6 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Roboto Mono', monospace; background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; transition: background-color 0.3s, color 0.3s; overflow: hidden; }
-    body.custom-cursor-enabled, body.custom-cursor-enabled * {
-        cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" stroke="black" stroke-width="1" class="bi bi-cursor" viewBox="0 0 16 16"> <path d="M14.082 2.182a.5.5 0 0 1 .103.557L8.528 15.467a.5.5 0 0 1-.917-.007L5.57 10.694.803 8.652a.5.5 0 0 1-.006-.916l12.728-5.657a.5.5 0 0 1 .556.103zM2.25 8.184l3.897 1.67a.5.5 0 0 1 .262.263l1.67 3.897L12.743 3.52z"/></svg>') 0 0, auto !important;
-    }
     main { text-align: center; width: 100%; max-width: 600px; z-index: 10; animation: fadeIn 0.5s ease-in-out; }
     h1 { margin-bottom: 1rem; }
     .star-display { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem; margin-bottom: 1rem; color: var(--star-color); animation: fadeIn 0.5s ease-in-out; }
@@ -288,17 +285,6 @@
                 <span>エピック以上のブロックが出た時の特別演出</span>
                 <label class="switch">
                     <input type="checkbox" id="animation-toggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-             <div class="setting-item">
-                <span>カスタムカーソルを表示
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cursor" viewBox="0 0 16 16" style="vertical-align: -3px; margin-left: 5px;">
-                        <path d="M14.082 2.182a.5.5 0 0 1 .103.557L8.528 15.467a.5.5 0 0 1-.917-.007L5.57 10.694.803 8.652a.5.5 0 0 1-.006-.916l12.728-5.657a.5.5 0 0 1 .556.103zM2.25 8.184l3.897 1.67a.5.5 0 0 1 .262.263l1.67 3.897L12.743 3.52z"/>
-                    </svg>
-                </span>
-                <label class="switch">
-                    <input type="checkbox" id="custom-cursor-toggle">
                     <span class="slider"></span>
                 </label>
             </div>
@@ -624,11 +610,10 @@
         const saveData = () => localStorage.setItem('rngBlockGameData', JSON.stringify(playerData));
         const loadData = () => {
             const saved = localStorage.getItem('rngBlockGameData');
-            const defaults = { discoveredBlocks: {}, achievements: {}, settings: { showAnimation: true, useCustomCursor: false }, stats: { rolls: 0, highestLogProb: 0, stars: 0, startTime: Date.now() }, unlocks: { autoRoll: false, multiRoll: false }, cheats: { used: false } };
+            const defaults = { discoveredBlocks: {}, achievements: {}, settings: { showAnimation: true }, stats: { rolls: 0, highestLogProb: 0, stars: 0, startTime: Date.now() }, unlocks: { autoRoll: false, multiRoll: false }, cheats: { used: false } };
             playerData = saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
             if (!playerData.settings) playerData.settings = defaults.settings;
             if (playerData.settings.showAnimation === undefined) playerData.settings.showAnimation = true;
-            if (playerData.settings.useCustomCursor === undefined) playerData.settings.useCustomCursor = false;
             if (!playerData.stats) playerData.stats = defaults.stats;
             if (playerData.stats.stars === undefined) playerData.stats.stars = 0;
             if (!playerData.stats.startTime) playerData.stats.startTime = Date.now();
@@ -810,14 +795,6 @@
                 dom['roll-button'].disabled = false;
             }
         };
-        
-        const updateCustomCursor = () => {
-            if (playerData.settings.useCustomCursor) {
-                document.body.classList.add('custom-cursor-enabled');
-            } else {
-                document.body.classList.remove('custom-cursor-enabled');
-            }
-        };
 
         dom['roll-button'].addEventListener('click', doRoll);
         dom['settings-button'].addEventListener('click', () => {
@@ -829,14 +806,6 @@
             animationToggle.checked = playerData.settings.showAnimation;
             animationToggle.addEventListener('change', (e) => {
                 playerData.settings.showAnimation = e.target.checked;
-                saveData();
-            });
-
-            const customCursorToggle = modal.querySelector('#custom-cursor-toggle');
-            customCursorToggle.checked = playerData.settings.useCustomCursor;
-            customCursorToggle.addEventListener('change', (e) => {
-                playerData.settings.useCustomCursor = e.target.checked;
-                updateCustomCursor();
                 saveData();
             });
 
@@ -1159,7 +1128,6 @@
             loadData();
             updateUnlocksUI();
             updateStarDisplay();
-            updateCustomCursor();
             dom['result-block'].innerHTML = '<p>「回す」ボタンを押して始めよう！</p>';
             dom['result-block'].classList.add('found');
 
