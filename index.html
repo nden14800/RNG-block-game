@@ -226,6 +226,63 @@
     @keyframes transcendent-pulse { 0% { opacity: 0; background-size: 0% 0%; } 20% { opacity: 1; background-size: 200% 200%; } 80% { opacity: 1; background-size: 200% 200%; } 100% { opacity: 0; background-size: 0% 0%; } }
     @keyframes eldritch-swirl { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     @keyframes cosmic-bg { 0%, 100% { opacity: 0; } 10%, 90% { opacity: 1; } }
+
+    /* --- Achievement Toast CSS --- */
+    #achievement-toast-container {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        pointer-events: none;
+    }
+    .achievement-toast {
+        background-color: var(--secondary-bg-color);
+        color: var(--text-color);
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px var(--shadow-color);
+        border-left: 5px solid var(--success-color);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        min-width: 300px;
+        max-width: 90vw;
+        cursor: pointer;
+        pointer-events: all;
+        opacity: 0;
+        animation: toastFadeIn 0.5s ease-out forwards;
+    }
+    .achievement-toast.hide {
+        animation: toastFadeOut 0.5s ease-in forwards;
+    }
+    .toast-icon {
+        font-size: 24px;
+        color: var(--success-color);
+    }
+    .toast-content {
+        display: flex;
+        flex-direction: column;
+    }
+    .toast-title {
+        font-weight: bold;
+    }
+    .toast-message {
+        font-size: 0.9em;
+        opacity: 0.9;
+    }
+    @keyframes toastFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes toastFadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
 </style>
 </head>
 <body>
@@ -279,6 +336,8 @@
 
 <!-- Tooltip Element -->
 <div id="detail-tooltip" class="detail-tooltip"></div>
+<!-- Achievement Toast Container -->
+<div id="achievement-toast-container"></div>
 
 <template id="settings-modal-template">
     <div class="modal-content">
@@ -372,6 +431,9 @@
         <div class="modal-body" id="help-info" style="text-align: left; line-height: 1.8;">
             <h3>基本ルール</h3>
             <p>「回す」ボタンを押して、様々な確率のブロックを見つけましょう。見つけたブロックはコレクションに追加され、インベントリにストックされます。</p>
+            <br>
+            <h3>実績システム</h3>
+            <p>特定の条件を達成すると実績が解除され、画面に通知が表示されます。通知は3秒で消えるか、タップして消すことができます。</p>
             <br>
             <h3>星システム</h3>
             <p>新しいブロックを初めて見つけると、そのブロックのレア度に応じて「星」を獲得できます。星を集めて、自分の進捗を確かめましょう！</p>
@@ -600,10 +662,47 @@
             return `<span>${probFractionStr}</span> <span>(${pctStr})</span>`;
         };
 
+        const showAchievementToast = (achievement) => {
+            const container = dom['achievement-toast-container'];
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = 'achievement-toast';
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trophy-fill" viewBox="0 0 16 16"><path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935"/></svg>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">実績解除！</div>
+                    <div class="toast-message">${achievement.name}</div>
+                </div>
+            `;
+
+            const removeToast = () => {
+                toast.classList.add('hide');
+                toast.addEventListener('animationend', () => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, { once: true });
+            };
+            
+            let timeoutId = setTimeout(removeToast, 3000);
+            
+            toast.addEventListener('click', () => {
+                clearTimeout(timeoutId);
+                removeToast();
+            }, { once: true });
+            
+            container.appendChild(toast);
+        };
+
         const playRarityAnimation = (rarity) => {
             const achievementId = `view_animation_${rarity}`;
             if (ACHIEVEMENTS.some(a => a.id === achievementId) && !playerData.achievements[achievementId]) {
+                const ach = ACHIEVEMENTS.find(a => a.id === achievementId);
                 playerData.achievements[achievementId] = { timestamp: Date.now() };
+                if (ach) showAchievementToast(ach);
             }
 
             if (!playerData.settings.showAnimation) return;
@@ -733,9 +832,7 @@
             const newDiscoveries = new Set();
 
             foundBlocksInRoll.forEach(block => {
-                // インベントリ更新
                 playerData.inventory[block.id] = (playerData.inventory[block.id] || 0) + 1;
-                // 新規発見チェック
                 if (!playerData.discoveredBlocks[block.id]) {
                     newDiscoveries.add(block);
                 }
@@ -780,7 +877,7 @@
         const updateUnlocksUI = () => {
             dom['unlock-features-container'].innerHTML = '';
             if (Object.values(playerData.unlocks).some(u => u) || playerData.cheats.used) {
-                const maxPower = playerData.cheats.superMultiRoll ? 20 : 7; // 2^7=128, 2^20≈1M
+                const maxPower = playerData.cheats.superMultiRoll ? 20 : 7;
                 const el = document.createElement('div');
                 el.className = 'unlock-features';
                 el.innerHTML = `<div class="unlock-feature"><span>オートロール</span>${playerData.unlocks.autoRoll ? `<label class="switch"><input type="checkbox" id="auto-roll-toggle"><span class="slider"></span></label>`: '<span>ロック中</span>'}</div><div class="unlock-feature"><span>複数回ロール</span>${playerData.unlocks.multiRoll ? `<div style="display:flex; align-items:center; gap: 10px;">x<span id="multi-roll-value">1</span><input type="range" id="multi-roll-slider" min="0" max="${maxPower}" value="0" step="1"></div>`: '<span>ロック中</span>'}</div>`;
@@ -816,7 +913,10 @@
                 if (ach.type === 'discovery_rarity' && discoveredRarities.has(ach.rarity)) achieved = true;
                 if (ach.type === 'discovery_count' && Object.keys(playerData.discoveredBlocks).length >= ach.goal) achieved = true;
                 if (ach.type === 'stars' && playerData.stats.stars >= ach.goal) achieved = true;
-                if (achieved) playerData.achievements[ach.id] = { timestamp: Date.now() };
+                if (achieved) {
+                    playerData.achievements[ach.id] = { timestamp: Date.now() };
+                    showAchievementToast(ach);
+                }
             });
         };
         const toggleAutoRoll = (event) => {
@@ -1068,7 +1168,6 @@
             const rarityFilter = content.querySelector('#rarity-filter');
             RARITY_ORDER.forEach(r => rarityFilter.add(new Option(r, r)));
             
-            // "owned-filter" の "owned" はインベントリでは常に true なので、フィルターを単純化
             const ownedFilter = content.querySelector('#owned-filter');
             ownedFilter.innerHTML = '<option value="owned">所持済みのみ</option>';
             ownedFilter.disabled = true;
