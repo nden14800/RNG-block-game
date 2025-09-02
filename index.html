@@ -92,7 +92,7 @@
     }
     input:checked + .slider { background-color: var(--primary-color); }
     input:checked + .slider:before { transform: translateX(34px); }
-    #collection-controls { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; animation: fadeIn 0.5s ease; }
+    #collection-controls, #inventory-controls { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; animation: fadeIn 0.5s ease; }
     .filter-group { display: flex; flex-wrap: wrap; gap: 10px; }
     .search-container { position: relative; flex-grow: 1; }
     #search-input { width: 100%; padding: 8px 30px 8px 10px; font-family: 'Roboto Mono', monospace; background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; }
@@ -103,14 +103,15 @@
     .btn:active { transform: translateY(1px); }
     .btn.btn-danger { background-color: var(--danger-color); color: white; border-color: var(--danger-color); }
     .btn.btn-danger:hover { background-color: #c82333; }
-    #collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; animation: fadeIn 0.5s ease; }
+    #collection-grid, #inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; animation: fadeIn 0.5s ease; }
     .pagination-controls { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 20px; padding-top: 10px; border-top: 1px solid var(--border-color); }
     .block-card { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; min-height: 120px; }
     .block-card.not-discovered { opacity: 0.6; cursor: default; justify-content: center; }
     .block-card-name { font-weight: bold; font-size: 1.1rem; word-wrap: break-word; }
     .block-card-rarity { font-size: 0.9rem; margin: 10px 0; padding: 2px 6px; border-radius: 4px; display: inline-block; color: white; font-weight: bold; }
     .rarity-Cosmic { background: var(--rarity-cosmic); background-size: 200% 200%; animation: cosmic-gradient 3s ease infinite; color: #111; }
-    .block-card-prob { font-size: 0.8rem; min-height: 2.5em; display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; gap: 0.5em; white-space: nowrap; }
+    .block-card-prob, .block-card-count { font-size: 0.8rem; min-height: 2.5em; display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; gap: 0.5em; white-space: nowrap; }
+    .block-card-count { min-height: 1.5em; }
     .block-card-actions { height: 40px; margin-top: 10px; display: flex; justify-content: center; align-items: center; }
     .replay-animation-btn { width: 36px; height: 36px; }
     .replay-animation-btn svg { width: 18px; height: 18px; }
@@ -244,8 +245,9 @@
     <button id="help-button" class="icon-button" title="遊び方"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"/></svg></button>
     <button id="stats-button" class="icon-button" title="統計"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-up-arrow" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"/></svg></button>
     <button id="collection-button" class="icon-button" title="コレクション"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-boxes" viewBox="0 0 16 16"><path d="M7.752.066a.5.5 0 0 1 .496 0l3.75 2.143a.5.5 0 0 1 .252.434v3.995l3.498 2A.5.5 0 0 1 16 9.07v4.286a.5.5 0 0 1-.252.434l-3.75 2.143a.5.5 0 0 1-.496 0l-3.502-2-3.502 2.001a.5.5 0 0 1-.496 0l-3.75-2.143A.5.5 0 0 1 0 13.357V9.071a.5.5 0 0 1 .252-.434L3.75 6.638V2.643a.5.5 0 0 1 .252-.434zM4.25 7.504 1.508 9.071l2.742 1.567 2.742-1.567zM7.5 9.933l-2.75 1.571v3.134l2.75-1.571zm1 3.134 2.75 1.571v-3.134L8.5 9.933zm.508-3.996 2.742 1.567 2.742-1.567-2.742-1.567zm2.242-2.433V3.504L8.5 5.076V8.21zM7.5 8.21V5.076L4.75 3.504v3.134zM5.258 2.643 8 4.21l2.742-1.567L8 1.076zM15 9.933l-2.75 1.571v3.134L15 13.067zM3.75 14.638v-3.134L1 9.933v3.134z"/></svg></button>
+    <button id="inventory-button" class="icon-button" title="インベントリ"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16"><path d="M4.04 7.43a4 4 0 0 1 7.92 0 .5.5 0 1 1-.99.14 3 3 0 0 0-5.94 0 .5.5 0 1 1-.99-.14M4 9.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm1 .5v3h6v-3h-1v.5a.5.5 0 0 1-1 0V10z"/><path d="M6 2.341V2a2 2 0 1 1 4 0v.341c2.33.824 4 3.047 4 5.659v5.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V8a6 6 0 0 1 4-5.659M7 2v.083a6 6 0 0 1 2 0V2a1 1 0 0 0-2 0m1 1a5 5 0 0 0-5 5v5.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V8a5 5 0 0 0-5-5"/></svg></button>
     <button id="achievements-button" class="icon-button" title="実績"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trophy-fill" viewBox="0 0 16 16"><path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935"/></svg></button>
-    <button id="settings-button" class="icon-button" title="設定"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527-1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764-.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/></svg></button>
+    <button id="settings-button" class="icon-button" title="設定"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c-1.79-.527-1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764-.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/></svg></button>
 </header>
 
 <main>
@@ -269,6 +271,7 @@
 
 <div id="settings-modal" class="modal"></div>
 <div id="collection-modal" class="modal"></div>
+<div id="inventory-modal" class="modal"></div>
 <div id="achievements-modal" class="modal"></div>
 <div id="stats-modal" class="modal"></div>
 <div id="help-modal" class="modal"></div>
@@ -327,6 +330,27 @@
     </div>
 </template>
 
+<template id="inventory-modal-template">
+    <div class="modal-content">
+        <div class="modal-header"><div><h2>インベントリ</h2><div id="inventory-progress" class="progress-text"></div></div><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
+        <div id="inventory-controls">
+            <div class="filter-group">
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="名前で検索...">
+                    <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></svg></span>
+                </div>
+                <select id="rarity-filter"><option value="all">全てのレア度</option></select>
+            </div>
+            <div class="filter-group">
+                <select id="sort-order"><option value="count-desc">所持数順 (多→少)</option><option value="count-asc">所持数順 (少→多)</option><option value="logProb-desc">レア度順 (高→低)</option><option value="logProb-asc">レア度順 (低→高)</option><option value="name-asc">名前順 (昇順)</option><option value="name-desc">名前順 (降順)</option></select>
+                <select id="owned-filter"><option value="all">全て表示</option><option value="owned">所持済みのみ</option></select>
+            </div>
+        </div>
+        <div class="modal-body" id="inventory-grid"></div>
+        <div class="pagination-controls" id="inventory-pagination"><button id="inventory-prev" class="icon-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/></svg></button><span id="inventory-page-info"></span><button id="inventory-next" class="icon-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg></button></div>
+    </div>
+</template>
+
 <template id="achievements-modal-template">
     <div class="modal-content">
          <div class="modal-header"><div><h2>実績</h2><div id="achievement-progress" class="progress-text"></div></div><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
@@ -347,7 +371,7 @@
         <div class="modal-header"><h2>遊び方</h2><button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button></div>
         <div class="modal-body" id="help-info" style="text-align: left; line-height: 1.8;">
             <h3>基本ルール</h3>
-            <p>「回す」ボタンを押して、様々な確率のブロックを見つけましょう。見つけたブロックはコレクションに追加されます。</p>
+            <p>「回す」ボタンを押して、様々な確率のブロックを見つけましょう。見つけたブロックはコレクションに追加され、インベントリにストックされます。</p>
             <br>
             <h3>星システム</h3>
             <p>新しいブロックを初めて見つけると、そのブロックのレア度に応じて「星」を獲得できます。星を集めて、自分の進捗を確かめましょう！</p>
@@ -362,17 +386,18 @@
                 <li><b>複数回ロール (1/10,000以上):</b> 一度にまとめてロールできるようになります。スライダーで2倍ずつ回数を変更できます。</li>
             </ul>
             <br>
-            <h3>コレクション画面での操作</h3>
-            <p>コレクションのブロックにマウスカーソルを合わせるか、指で触れると、そのブロックの詳細情報がツールチップで表示されます。指を動かすと他のブロックの情報もスムーズに確認できます。</p>
+            <h3>コレクション・インベントリ画面での操作</h3>
+            <p>コレクションやインベントリのブロックにマウスカーソルを合わせるか、指で触れると、そのブロックの詳細情報がツールチップで表示されます。指を動かすと他のブロックの情報もスムーズに確認できます。</p>
             <br>
             <h3>画面のボタン</h3>
             <ul style="list-style: none; padding-left: 0;">
                 <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path><path fill="currentColor" d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"></path></svg> <b>レア度情報:</b> 各レア度の確率の目安を確認できます。</li>
                 <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"/></svg> <b>遊び方:</b> この画面を表示します。</li>
                 <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-up-arrow" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"/></svg> <b>統計:</b> ゲームのプレイ記録を確認できます。</li>
-                <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-boxes" viewBox="0 0 16 16"><path d="M7.752.066a.5.5 0 0 1 .496 0l3.75 2.143a.5.5 0 0 1 .252.434v3.995l3.498 2A.5.5 0 0 1 16 9.07v4.286a.5.5 0 0 1-.252.434l-3.75 2.143a.5.5 0 0 1-.496 0l-3.502-2-3.502 2.001a.5.5 0 0 1-.496 0l-3.75-2.143A.5.5 0 0 1 0 13.357V9.071a.5.5 0 0 1 .252-.434L3.75 6.638V2.643a.5.5 0 0 1 .252-.434zM4.25 7.504 1.508 9.071l2.742 1.567 2.742-1.567zM7.5 9.933l-2.75 1.571v3.134l2.75-1.571zm1 3.134 2.75 1.571v-3.134L8.5 9.933zm.508-3.996 2.742 1.567 2.742-1.567-2.742-1.567zm2.242-2.433V3.504L8.5 5.076V8.21zM7.5 8.21V5.076L4.75 3.504v3.134zM5.258 2.643 8 4.21l2.742-1.567L8 1.076zM15 9.933l-2.75 1.571v3.134L15 13.067zM3.75 14.638v-3.134L1 9.933v3.134z"/></svg> <b>コレクション:</b> 見つけたブロックを一覧で確認できます。</li>
+                <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-boxes" viewBox="0 0 16 16"><path d="M7.752.066a.5.5 0 0 1 .496 0l3.75 2.143a.5.5 0 0 1 .252.434v3.995l3.498 2A.5.5 0 0 1 16 9.07v4.286a.5.5 0 0 1-.252.434l-3.75 2.143a.5.5 0 0 1-.496 0l-3.502-2-3.502 2.001a.5.5 0 0 1-.496 0l-3.75-2.143A.5.5 0 0 1 0 13.357V9.071a.5.5 0 0 1 .252-.434L3.75 6.638V2.643a.5.5 0 0 1 .252-.434zM4.25 7.504 1.508 9.071l2.742 1.567 2.742-1.567zM7.5 9.933l-2.75 1.571v3.134l2.75-1.571zm1 3.134 2.75 1.571v-3.134L8.5 9.933zm.508-3.996 2.742 1.567 2.742-1.567-2.742-1.567zm2.242-2.433V3.504L8.5 5.076V8.21zM7.5 8.21V5.076L4.75 3.504v3.134zM5.258 2.643 8 4.21l2.742-1.567L8 1.076zM15 9.933l-2.75 1.571v3.134L15 13.067zM3.75 14.638v-3.134L1 9.933v3.134z"/></svg> <b>コレクション:</b> 見つけたブロックの種類を一覧で確認できます。</li>
+                <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backpack" viewBox="0 0 16 16"><path d="M4.04 7.43a4 4 0 0 1 7.92 0 .5.5 0 1 1-.99.14 3 3 0 0 0-5.94 0 .5.5 0 1 1-.99-.14M4 9.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm1 .5v3h6v-3h-1v.5a.5.5 0 0 1-1 0V10z"/><path d="M6 2.341V2a2 2 0 1 1 4 0v.341c2.33.824 4 3.047 4 5.659v5.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5V8a6 6 0 0 1 4-5.659M7 2v.083a6 6 0 0 1 2 0V2a1 1 0 0 0-2 0m1 1a5 5 0 0 0-5 5v5.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V8a5 5 0 0 0-5-5"/></svg> <b>インベントリ:</b> 所持しているブロックの数を確認できます。</li>
                 <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trophy-fill" viewBox="0 0 16 16"><path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935"/></svg> <b>実績:</b> 特定の条件を達成すると実績が解放されます。</li>
-                <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527-1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764-.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/></svg> <b>設定:</b> ゲームの動作やデータを管理できます。</li>
+                <li><svg style="display:inline; vertical-align: -2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c-1.79-.527-1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764-.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/></svg> <b>設定:</b> ゲームの動作やデータを管理できます。</li>
             </ul>
         </div>
     </div>
@@ -545,7 +570,7 @@
 
         const UNLOCK_THRESHOLDS = { autoRoll: 2, multiRoll: 4 };
         const dom = new Proxy({}, { get: (_, id) => document.getElementById(id) });
-        let playerData, isRolling = false, autoRollInterval = null, collectionCurrentPage = 1, achievementsCurrentPage = 1;
+        let playerData, isRolling = false, autoRollInterval = null, collectionCurrentPage = 1, inventoryCurrentPage = 1, achievementsCurrentPage = 1;
         let activeModalUpdateCallback = null;
         
         const formatProb = (logProb) => {
@@ -610,8 +635,9 @@
         const saveData = () => localStorage.setItem('rngBlockGameData', JSON.stringify(playerData));
         const loadData = () => {
             const saved = localStorage.getItem('rngBlockGameData');
-            const defaults = { discoveredBlocks: {}, achievements: {}, settings: { showAnimation: true }, stats: { rolls: 0, highestLogProb: 0, stars: 0, startTime: Date.now() }, unlocks: { autoRoll: false, multiRoll: false }, cheats: { used: false } };
+            const defaults = { discoveredBlocks: {}, inventory: {}, achievements: {}, settings: { showAnimation: true }, stats: { rolls: 0, highestLogProb: 0, stars: 0, startTime: Date.now() }, unlocks: { autoRoll: false, multiRoll: false }, cheats: { used: false } };
             playerData = saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
+            if (!playerData.inventory) playerData.inventory = defaults.inventory;
             if (!playerData.settings) playerData.settings = defaults.settings;
             if (playerData.settings.showAnimation === undefined) playerData.settings.showAnimation = true;
             if (!playerData.stats) playerData.stats = defaults.stats;
@@ -705,7 +731,15 @@
             
             bestBlock = foundBlocksInRoll.reduce((best, current) => (!best || current.logProb > best.logProb) ? current : best, null);
             const newDiscoveries = new Set();
-            foundBlocksInRoll.forEach(block => { if (!playerData.discoveredBlocks[block.id]) newDiscoveries.add(block); });
+
+            foundBlocksInRoll.forEach(block => {
+                // インベントリ更新
+                playerData.inventory[block.id] = (playerData.inventory[block.id] || 0) + 1;
+                // 新規発見チェック
+                if (!playerData.discoveredBlocks[block.id]) {
+                    newDiscoveries.add(block);
+                }
+            });
             
             if (newDiscoveries.size > 0) {
                 const timestamp = Date.now();
@@ -813,7 +847,7 @@
             const activateCheat = () => { playerData.cheats.used = true; saveData(); };
             modal.querySelector('#cheat-unlock-features').addEventListener('click', () => { activateCheat(); Object.keys(playerData.unlocks).forEach(k => playerData.unlocks[k] = true); updateUnlocksUI(); alert("全ての機能がアンロックされました。"); });
             modal.querySelector('#cheat-unlock-blocks').addEventListener('click', () => { 
-                if(confirm("本当に全てのブロックを入手しますか？ (星も加算されます)")){ 
+                if(confirm("本当に全てのブロックを発見済みにしますか？ (星も加算されます)")){ 
                     activateCheat(); 
                     const ts = Date.now();
                     let starsToAdd = 0;
@@ -826,7 +860,7 @@
                     playerData.stats.stars += starsToAdd;
                     playerData.stats.stars = Math.min(playerData.stats.stars, TOTAL_STARS);
                     updateStarDisplay();
-                    alert(`全てのブロックを入手し、${starsToAdd.toLocaleString()}個の星を獲得しました。`); 
+                    alert(`全てのブロックを発見済みにし、${starsToAdd.toLocaleString()}個の星を獲得しました。`); 
                 }
             });
             modal.querySelector('#cheat-unlock-achievements').addEventListener('click', () => { if(confirm("本当に全ての実績をアンロックしますか？")){ activateCheat(); playerData.achievements = ACHIEVEMENTS.reduce((acc, ach) => ({...acc, [ach.id]: {timestamp:Date.now()}}), {}); alert("全ての実績をアンロックしました。"); }});
@@ -848,6 +882,103 @@
             modal.querySelector('#reset-data-btn').addEventListener('click', () => { if (confirm('本当に全てのデータをリセットしますか？この操作は取り消せません。ページがリロードされます。')) { localStorage.removeItem('rngBlockGameData'); location.reload(); }});
         });
         
+        const setupModalTooltip = (modalId, gridId) => {
+            const modal = dom[modalId];
+            if (!modal) return;
+            const grid = modal.querySelector(`#${gridId}`);
+            if (!grid) return;
+            const detailTooltip = dom['detail-tooltip'];
+            let activeTooltipTarget = null;
+            let lastMoveEvent = null;
+            let tooltipUpdateTicking = false;
+
+            const updateTooltipPosition = (e) => {
+                if (!detailTooltip.classList.contains('show')) return;
+                const clientX = e.clientX ?? e.touches[0].clientX;
+                const clientY = e.clientY ?? e.touches[0].clientY;
+                let x = clientX + 15;
+                let y = clientY + 15;
+                const tooltipRect = detailTooltip.getBoundingClientRect();
+                if (window.innerWidth > 0 && x + tooltipRect.width > window.innerWidth) x = clientX - tooltipRect.width - 15;
+                if (window.innerHeight > 0 && y + tooltipRect.height > window.innerHeight) y = clientY - tooltipRect.height - 15;
+                detailTooltip.style.left = `${Math.max(5, x)}px`;
+                detailTooltip.style.top = `${Math.max(5, y)}px`;
+            };
+
+            const showTooltip = (target, e) => {
+                const blockId = parseInt(target.dataset.blockId, 10);
+                const block = BLOCKS.find(b => b.id === blockId);
+                const discoveryInfo = playerData.discoveredBlocks[blockId];
+                if (!block) return;
+
+                let tooltipHTML = `
+                    <div class="block-card-name" style="font-size: 1.1rem; font-weight: bold;">${block.name}</div>
+                    <div class="block-card-rarity" style="background: ${RARITY_DATA[block.rarity].color}; display: inline-block; padding: 2px 6px; border-radius: 4px; color: white; font-weight: bold; margin: 5px 0;">${block.rarity}</div>
+                    <div class="block-card-prob">${formatProb(block.logProb)}</div>
+                    <div style="border-top: 1px dashed var(--border-color); margin-top: 8px; padding-top: 8px; text-align: left; font-size: 0.85rem;">`;
+                
+                if (modalId === 'inventory-modal') {
+                    const count = playerData.inventory[blockId] || 0;
+                    tooltipHTML += `<div style="display: flex; justify-content: space-between;"><strong>所持数:</strong> <span>${count.toLocaleString()}個</span></div>`;
+                }
+
+                if (discoveryInfo) {
+                    tooltipHTML += `
+                        <div style="display: flex; justify-content: space-between;"><strong>星:</strong> <span>+${getStarsForBlock(block).toLocaleString()}</span></div>
+                        <div style="display: flex; justify-content: space-between;"><strong>初入手:</strong> <span>${new Date(discoveryInfo.timestamp).toLocaleString('ja-JP')}</span></div>`;
+                }
+                
+                tooltipHTML += `<div style="display: flex; justify-content: space-between;"><strong>チート使用:</strong> <span>${playerData.cheats.used ? 'はい' : 'いいえ'}</span></div></div>`;
+
+                detailTooltip.innerHTML = tooltipHTML;
+                detailTooltip.classList.add('show');
+                updateTooltipPosition(e);
+            };
+
+            const hideTooltip = () => {
+                if (detailTooltip.classList.contains('show')) detailTooltip.classList.remove('show');
+                activeTooltipTarget = null;
+            };
+            
+            const handleMove = (e) => {
+                lastMoveEvent = e;
+                if (tooltipUpdateTicking) return;
+                tooltipUpdateTicking = true;
+                requestAnimationFrame(() => {
+                    const clientX = lastMoveEvent.clientX ?? lastMoveEvent.touches[0].clientX;
+                    const clientY = lastMoveEvent.clientY ?? lastMoveEvent.touches[0].clientY;
+                    const currentElement = document.elementFromPoint(clientX, clientY);
+                    const card = currentElement ? currentElement.closest('.block-card:not(.not-discovered)') : null;
+                    if (card) {
+                        if (card !== activeTooltipTarget) {
+                            activeTooltipTarget = card;
+                            showTooltip(card, lastMoveEvent);
+                        }
+                        updateTooltipPosition(lastMoveEvent);
+                    } else {
+                        hideTooltip();
+                    }
+                    tooltipUpdateTicking = false;
+                });
+            };
+            
+            grid.addEventListener('click', e => {
+                const btn = e.target.closest('.replay-animation-btn');
+                if (btn) {
+                    e.stopPropagation();
+                    const rarity = btn.dataset.rarity;
+                    if (rarity) playRarityAnimation(rarity);
+                    return;
+                }
+            });
+
+            grid.addEventListener('mousemove', handleMove);
+            grid.addEventListener('mouseleave', hideTooltip);
+            grid.addEventListener('touchstart', (e) => { handleMove(e); }, { passive: true });
+            grid.addEventListener('touchmove', (e) => { e.preventDefault(); handleMove(e); }, { passive: false });
+            grid.addEventListener('touchend', hideTooltip);
+        };
+
         dom['collection-button'].addEventListener('click', () => {
             collectionCurrentPage = 1;
             const content = dom['collection-modal-template'].content.cloneNode(true);
@@ -926,88 +1057,85 @@
             modal.querySelector('#collection-prev').addEventListener('click', () => { if(collectionCurrentPage > 1) { collectionCurrentPage--; updateFunc(); }});
             modal.querySelector('#collection-next').addEventListener('click', () => { if (!modal.querySelector('#collection-next').disabled) { collectionCurrentPage++; updateFunc(); }});
             
-            // --- Tooltip & Replay Button Logic ---
-            const grid = modal.querySelector('#collection-grid');
-            const detailTooltip = dom['detail-tooltip'];
-            let activeTooltipTarget = null;
-            let lastMoveEvent = null;
-            let tooltipUpdateTicking = false;
+            setupModalTooltip(modalId, 'collection-grid');
+        });
+        
+        dom['inventory-button'].addEventListener('click', () => {
+            inventoryCurrentPage = 1;
+            const content = dom['inventory-modal-template'].content.cloneNode(true);
+            const modalId = 'inventory-modal';
             
-            grid.addEventListener('click', e => {
-                const btn = e.target.closest('.replay-animation-btn');
-                if (btn) {
-                    e.stopPropagation();
-                    const rarity = btn.dataset.rarity;
-                    if (rarity) playRarityAnimation(rarity);
-                    return;
-                }
-            });
+            const rarityFilter = content.querySelector('#rarity-filter');
+            RARITY_ORDER.forEach(r => rarityFilter.add(new Option(r, r)));
+            
+            // "owned-filter" の "owned" はインベントリでは常に true なので、フィルターを単純化
+            const ownedFilter = content.querySelector('#owned-filter');
+            ownedFilter.innerHTML = '<option value="owned">所持済みのみ</option>';
+            ownedFilter.disabled = true;
 
-            const updateTooltipPosition = (e) => {
-                if (!detailTooltip.classList.contains('show')) return;
-                const clientX = e.clientX ?? e.touches[0].clientX;
-                const clientY = e.clientY ?? e.touches[0].clientY;
-                let x = clientX + 15;
-                let y = clientY + 15;
-                const tooltipRect = detailTooltip.getBoundingClientRect();
-                if (window.innerWidth > 0 && x + tooltipRect.width > window.innerWidth) x = clientX - tooltipRect.width - 15;
-                if (window.innerHeight > 0 && y + tooltipRect.height > window.innerHeight) y = clientY - tooltipRect.height - 15;
-                detailTooltip.style.left = `${Math.max(5, x)}px`;
-                detailTooltip.style.top = `${Math.max(5, y)}px`;
-            };
-
-            const showTooltip = (target, e) => {
-                const blockId = parseInt(target.dataset.blockId, 10);
-                const block = BLOCKS.find(b => b.id === blockId);
-                const discoveryInfo = playerData.discoveredBlocks[blockId];
-                if (!block || !discoveryInfo) return;
+            const updateFunc = () => {
+                const modal = dom[modalId];
+                if (!modal || modal.style.display === 'none') return;
                 
-                detailTooltip.innerHTML = `
-                    <div class="block-card-name" style="font-size: 1.1rem; font-weight: bold;">${block.name}</div>
-                    <div class="block-card-rarity" style="background: ${RARITY_DATA[block.rarity].color}; display: inline-block; padding: 2px 6px; border-radius: 4px; color: white; font-weight: bold; margin: 5px 0;">${block.rarity}</div>
-                    <div class="block-card-prob">${formatProb(block.logProb)}</div>
-                    <div style="border-top: 1px dashed var(--border-color); margin-top: 8px; padding-top: 8px; text-align: left; font-size: 0.85rem;">
-                        <div style="display: flex; justify-content: space-between;"><strong>星:</strong> <span>+${getStarsForBlock(block).toLocaleString()}</span></div>
-                        <div style="display: flex; justify-content: space-between;"><strong>入手:</strong> <span>${new Date(discoveryInfo.timestamp).toLocaleString('ja-JP')}</span></div>
-                        <div style="display: flex; justify-content: space-between;"><strong>チート使用:</strong> <span>${playerData.cheats.used ? 'はい' : 'いいえ'}</span></div>
-                    </div>
-                `;
-                detailTooltip.classList.add('show');
-                updateTooltipPosition(e);
-            };
+                const totalItems = Object.values(playerData.inventory).reduce((sum, count) => sum + count, 0);
+                const uniqueItems = Object.keys(playerData.inventory).length;
+                modal.querySelector('#inventory-progress').textContent = `種類: ${uniqueItems.toLocaleString()} / 総数: ${totalItems.toLocaleString()}`;
 
-            const hideTooltip = () => {
-                if (detailTooltip.classList.contains('show')) detailTooltip.classList.remove('show');
-                activeTooltipTarget = null;
-            };
+                const searchTerm = modal.querySelector('#search-input').value.toLowerCase();
+                const rarity = modal.querySelector('#rarity-filter').value;
+                const [sortKey, sortDir] = modal.querySelector('#sort-order').value.split('-');
 
-            const handleMove = (e) => {
-                lastMoveEvent = e;
-                if (tooltipUpdateTicking) return;
-                tooltipUpdateTicking = true;
-                requestAnimationFrame(() => {
-                    const clientX = lastMoveEvent.clientX ?? lastMoveEvent.touches[0].clientX;
-                    const clientY = lastMoveEvent.clientY ?? lastMoveEvent.touches[0].clientY;
-                    const currentElement = document.elementFromPoint(clientX, clientY);
-                    const card = currentElement ? currentElement.closest('.block-card:not(.not-discovered)') : null;
-                    if (card) {
-                        if (card !== activeTooltipTarget) {
-                            activeTooltipTarget = card;
-                            showTooltip(card, lastMoveEvent);
-                        }
-                        updateTooltipPosition(lastMoveEvent);
-                    } else {
-                        hideTooltip();
-                    }
-                    tooltipUpdateTicking = false;
+                let filtered = BLOCKS.filter(b => {
+                    if (!(b.id in playerData.inventory) || playerData.inventory[b.id] === 0) return false;
+                    if (rarity !== 'all' && b.rarity !== rarity) return false;
+                    if (searchTerm && !b.name.toLowerCase().includes(searchTerm)) return false;
+                    return true;
                 });
+
+                filtered.sort((a, b) => {
+                    let valA, valB;
+                    if (sortKey === 'count') {
+                        valA = playerData.inventory[a.id] || 0;
+                        valB = playerData.inventory[b.id] || 0;
+                    } else {
+                        valA = a[sortKey];
+                        valB = b[sortKey];
+                    }
+                    if (typeof valA === 'string') return sortDir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                    return sortDir === 'asc' ? valA - valB : valB - valA;
+                });
+
+                const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+                inventoryCurrentPage = Math.min(inventoryCurrentPage, totalPages);
+                const startIndex = (inventoryCurrentPage - 1) * ITEMS_PER_PAGE;
+                const itemsToShow = filtered.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+                const grid = modal.querySelector('#inventory-grid');
+                grid.innerHTML = itemsToShow.map(b => {
+                    const count = playerData.inventory[b.id] || 0;
+                    return `
+                    <div class="block-card" data-block-id="${b.id}">
+                        <div style="flex-grow: 1;">
+                            <div class="block-card-name">${b.name}</div>
+                            <div class="block-card-rarity" style="background: ${RARITY_DATA[b.rarity].color}">${b.rarity}</div>
+                            <div class="block-card-count">所持数: ${count.toLocaleString()}</div>
+                        </div>
+                    </div>`;
+                }).join('');
+                
+                modal.querySelector('#inventory-page-info').textContent = `ページ ${inventoryCurrentPage} / ${totalPages}`;
+                modal.querySelector('#inventory-prev').disabled = inventoryCurrentPage === 1;
+                modal.querySelector('#inventory-next').disabled = inventoryCurrentPage === totalPages;
             };
 
-            grid.addEventListener('mousemove', handleMove);
-            grid.addEventListener('mouseleave', hideTooltip);
-            grid.addEventListener('touchstart', (e) => { handleMove(e); }, { passive: true });
-            grid.addEventListener('touchmove', (e) => { e.preventDefault(); handleMove(e); }, { passive: false });
-            grid.addEventListener('touchend', hideTooltip);
+            openModal(modalId, content, updateFunc);
+            updateFunc();
+
+            const modal = dom[modalId];
+            ['#search-input', '#rarity-filter', '#sort-order'].forEach(id => modal.querySelector(id).addEventListener('input', () => { inventoryCurrentPage = 1; updateFunc(); }));
+            modal.querySelector('#inventory-prev').addEventListener('click', () => { if(inventoryCurrentPage > 1) { inventoryCurrentPage--; updateFunc(); }});
+            modal.querySelector('#inventory-next').addEventListener('click', () => { if (!modal.querySelector('#inventory-next').disabled) { inventoryCurrentPage++; updateFunc(); }});
+            
+            setupModalTooltip(modalId, 'inventory-grid');
         });
 
         dom['achievements-button'].addEventListener('click', () => {
