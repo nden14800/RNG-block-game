@@ -485,7 +485,7 @@
         const RARITY_ORDER = Object.keys(RARITY_DATA);
         const getRarity = (logProb) => { let rarity = "コモン"; for (const r in RARITY_DATA) { if (logProb >= RARITY_DATA[r].threshold) rarity = r; } return rarity; };
         
-        const RARITY_STARS = { "コモン": 1, "アンコモン": 10, "レア": 100, "エピック": 1000, "レジェンダリー": 10000, "ミシカル": 100000, "ディバイン": 1000000, "セレスティアル": 3000000, "トランセンデント": 5000000, "エルドリッチ": 10000000, "コズミック": 50000000, };
+        const RARITY_STARS = { "コモン": 10, "アンコモン": 50, "レア": 100, "エピック": 500, "レジェンダリー": 1000, "ミシカル": 5000, "ディバイン": 10000, "セレスティアル": 50000, "トランセンデント": 100000, "エルドリッチ": 500000, "コズミック": 1000000, };
         const getStarsForBlock = (block) => { if (!block || !RARITY_STARS[block.rarity]) return 0; return RARITY_STARS[block.rarity]; };
 
         const createBlocks = () => {
